@@ -1,0 +1,144 @@
+.login-content {
+  --background: transparent;
+}
+
+.login-shell {
+  min-height: 100dvh;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
+  /* Figma (Interrupções): #C15261 em 77%, #26505F em 100% — linear topo → fundo */
+  background: linear-gradient(180deg, #c15261 0%, #c15261 77%, #26505f 100%);
+}
+
+.login-main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: min(440px, 100vw);
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: max(24px, env(safe-area-inset-top)) clamp(25px, 4vw, 24px) 0;
+}
+
+.login-logo {
+  display: block;
+  width: min(300px, 88vw, calc(100% - 32px));
+  height: auto;
+  margin-bottom: clamp(18px, 4vw, 28px);
+  filter: drop-shadow(0 4px 24px rgba(255, 255, 255, 0.35));
+}
+
+/**
+ * Empilhamento pedido: inputs (3) > pessoa (2) > botão Login (1).
+ * Ordem no DOM: inputs, botão, imagem — o z-index define a pintura final.
+ */
+.overlap-stage {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 0 0 auto;
+  /* Reserva vertical para a ilustração absoluta não colidir com o rodapé de texto */
+  padding-bottom: clamp(28px, 7dvh, 64px);
+  /* ion-content .inner-scroll usa overflow: hidden — nada do filho absoluto pode “sair” do bloco */
+  overflow: visible;
+}
+
+.inputs-stack {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  padding-top: 30px;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+}
+
+.login-submit {
+  position: relative;
+  z-index: 1;
+  padding-top: 40px;
+  margin-top: 22px;
+  width: 100%;
+  min-height: 56px;
+  height: 56px;
+  --min-height: 56px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  /* Branco a 0.15: `rgba` no fundo; não uses `opacity` no botão (afeta o texto) */
+  --background: rgba(255, 255, 255, 0.15);
+  --color: #ffffff;
+  --color-activated: #ffffff;
+  --color-hover: #ffffff;
+  --color-focused: #ffffff;
+  --background-activated: rgba(146, 61, 74, 0.55);
+  --background-hover: rgba(255, 255, 255, 0.28);
+  --border-radius: 14px;
+  --box-shadow: none;
+}
+
+/**
+ * Ilustração: nunca `right` negativo — o ion-content recorta (.inner-scroll overflow).
+ * A largura (%) vem de `.overlap-stage` (bloco de posicionamento) — cabe em qualquer coluna.
+ */
+.pessoa {
+  position: absolute;
+  right: -100px;
+  /* Menos intrusão para baixo: mais vazio entre vestido e texto do rodapé */
+  bottom: -10px;
+  left: auto;
+  z-index: 2;
+  pointer-events: none;
+  width: min(100%, clamp(138px, 66%, 420px));
+  height: auto;
+  max-height: min(70dvh, 70vh, 740px);
+  object-fit: contain;
+  object-position: right 88%;
+  transform: scaleX(-1);
+  transform-origin: center center;
+}
+
+/* Telemóveis: um pouco maior em % da coluna, altura com tecto em dvh (barra de endereço) */
+@media (max-width: 480px) {
+  .pessoa {
+    width: min(100%, clamp(128px, 75%, 355px));
+    max-height: min(64dvh, 64vh, 630px);
+  }
+}
+
+@media (max-width: 360px) {
+  .pessoa {
+    width: min(100%, clamp(112px, 80%, 300px));
+    max-height: min(58dvh, 58vh, 570px);
+  }
+}
+
+.login-footer {
+  position: relative;
+  z-index: 3;
+  margin-top: auto;
+  width: 100%;
+  text-align: center;
+  color: #ffffff;
+  font-size: clamp(0.82rem, 2.8vw, 0.92rem);
+  line-height: 1.5;
+  /* Afasta o texto “Acessar site oficial…” da silhueta (ilustração em absolute) */
+  padding: clamp(24px, 5.5dvh, 44px) 0 max(20px, env(safe-area-inset-bottom));
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: #c96c78;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}

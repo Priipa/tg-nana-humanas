@@ -1,0 +1,52 @@
+<ion-content [fullscreen]="true" [scrollY]="true" class="login-content">
+  <div class="login-shell">
+    <main class="login-main">
+      <img
+        class="login-logo"
+        src="assets/login/logo-minimalista.png"
+        width="320"
+        height="320"
+        alt="Nana de Humanas — Aquarelas Afetivas"
+      />
+
+      <div class="overlap-stage">
+        <div class="inputs-stack">
+          <app-custom-input
+            inputId="login-email"
+            label="E-mail"
+            inputType="email"
+            placeholder="Digite seu e-mail"
+            autocomplete="email"
+            [(value)]="email"
+          />
+
+          <app-custom-input
+            inputId="login-password"
+            label="Senha"
+            inputType="password"
+            placeholder="Digite sua senha"
+            autocomplete="current-password"
+            [(value)]="password"
+          />
+        </div>
+
+        <ion-button expand="block" class="login-submit" (click)="onLogin()"> Login </ion-button>
+
+        <img
+          class="pessoa"
+          src="assets/login/pessoa.png"
+          alt=""
+          width="300"
+          height="770"
+        />
+      </div>
+
+      <footer class="login-footer">
+        <p>
+          Acessar site oficial
+          <a href="https://nanadehumanas.com.br" target="_blank" rel="noopener noreferrer">Nana de Humanas</a>
+        </p>
+      </footer>
+    </main>
+  </div>
+</ion-content>

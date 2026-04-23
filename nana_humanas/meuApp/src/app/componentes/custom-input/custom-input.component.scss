@@ -1,0 +1,73 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.field-block {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.field-label {
+  color: #ffffff;
+  font-size: clamp(0.9rem, 3.2vw, 0.95rem);
+  font-weight: 500;
+  margin: 0 0 8px 2px;
+}
+
+.custom-input-field {
+  --background: #ffffff;
+  --color: #1e1e1e;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 19px;
+  --padding-bottom: 19px;
+  min-height: 56px;
+  --min-height: 56px;
+  --border-radius: 12px;
+  --border-width: 0;
+  --border-color: transparent;
+  --highlight-height: 0;
+  --highlight-color-focused: #26505f;
+  border-radius: 12px;
+  font-size: 1rem;
+  box-shadow: none;
+}
+
+:host ::ng-deep ion-input.custom-input-field.has-focus {
+  box-shadow:
+    0 0 0 0.5px #26505f,
+    0 2px 10px rgba(38, 80, 95, 0.5);
+}
+
+:host ::ng-deep ion-input.custom-input-field .native-input {
+  outline: none;
+  box-shadow: none;
+}
+
+.password-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.custom-input-field--password {
+  flex: 1;
+  --padding-end: 52px;
+}
+
+.eye-toggle {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  margin: 0;
+  --color: #c15261;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  min-height: 56px;
+  height: 56px;
+  --min-height: 56px;
+}

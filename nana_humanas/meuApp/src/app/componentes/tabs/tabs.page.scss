@@ -1,0 +1,45 @@
+ion-tab-bar {
+  --background: #26505f;
+  --color: rgba(255, 255, 255, 0.78);
+  --color-focused: #ffffff;
+  --color-selected: #ffffff;
+}
+
+ion-tab-button {
+  --color: rgba(255, 255, 255, 0.78);
+  --color-focused: #ffffff;
+  --color-selected: #ffffff;
+}
+
+.tab-icon-wrap {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: block;
+  margin: 0;
+}
+
+ion-tab-button .tab-icon {
+  position: absolute;
+  inset: 0;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  filter: brightness(0) invert(1);
+}
+
+ion-tab-button .tab-icon--active {
+  opacity: 0;
+}
+
+ion-tab-button.tab-selected .tab-icon--default {
+  opacity: 0;
+}
+
+ion-tab-button.tab-selected .tab-icon--active {
+  opacity: 1;
+}

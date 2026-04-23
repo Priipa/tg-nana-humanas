@@ -1,0 +1,64 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Tipografia: arquivos servidos localmente via @fontsource (woff2 no bundle) */
+@import "@fontsource/roboto-serif/latin-400.css";
+@import "@fontsource/roboto-serif/latin-500.css";
+@import "@fontsource/roboto-serif/latin-600.css";
+@import "@fontsource/roboto-serif/latin-700.css";
+@import "@fontsource/playwrite-us-trad/latin-400.css";
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+@import '@ionic/angular/css/palettes/dark.system.css';
+
+/**
+ * Ionic (core.css) define `html { --ion-font-family: var(--ion-default-font) }` e
+ * `html.md` usa Roboto sans. Sobrescrever aqui, depois de todos os @import Ionic,
+ * garante Roboto Serif em toolbar, tabs e texto.
+ */
+html {
+  --ion-font-family: "Roboto Serif", ui-serif, Georgia, serif;
+  --app-font-display: "Playwrite US Trad", "Segoe Script", cursive;
+}
+
+/**
+ * Playwrite US Trad: use em `ion-title`, headings, etc.
+ * `!important` vence o clone do Ionic e estilos no shadow de `ion-title`.
+ */
+.font-playwrite,
+.title-playwrite {
+  font-family: var(--app-font-display) !important;
+  font-weight: 400 !important;
+}

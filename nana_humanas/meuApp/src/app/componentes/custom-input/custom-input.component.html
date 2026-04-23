@@ -1,0 +1,39 @@
+<div class="field-block">
+  <label class="field-label" [for]="inputId()">{{ label() }}</label>
+
+  @if (inputType() === 'password') {
+    <div class="password-row">
+      <ion-input
+        [id]="inputId()"
+        class="custom-input-field custom-input-field--password"
+        [type]="showPassword() ? 'text' : 'password'"
+        [placeholder]="placeholder()"
+        [autocomplete]="autocomplete()"
+        [ngModel]="value()"
+        (ngModelChange)="value.set($event)"
+        [counter]="false"
+      ></ion-input>
+      <ion-button
+        type="button"
+        class="eye-toggle"
+        fill="clear"
+        aria-label="Mostrar ou ocultar senha"
+        (click)="togglePassword()"
+      >
+        <ion-icon slot="icon-only" [name]="showPassword() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+      </ion-button>
+    </div>
+  } @else {
+    <ion-input
+      [id]="inputId()"
+      class="custom-input-field"
+      type="email"
+      inputmode="email"
+      [placeholder]="placeholder()"
+      [autocomplete]="autocomplete()"
+      [ngModel]="value()"
+      (ngModelChange)="value.set($event)"
+      [counter]="false"
+    ></ion-input>
+  }
+</div>

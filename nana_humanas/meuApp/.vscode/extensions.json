@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "Angular.ng-template",
+    "dbaeumer.vscode-eslint",
+    "WebNative.webnative",
+    "mrmlnc.vscode-scss",
+    "EditorConfig.EditorConfig",
+    "Webnative.webnative"
+  ]
+}
