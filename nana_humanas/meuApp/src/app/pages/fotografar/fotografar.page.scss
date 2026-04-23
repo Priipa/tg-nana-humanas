@@ -1,1 +1,634 @@
-/* Estilos do título grande: ver src/theme/variables.scss (ion-title + clone Ionic) */
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+  /* Reduz “scroll” horizontal acidental (margens, 100vw, etc.) */
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Preenchimento da altura: sem transparent, para nunca revelar o fundo preto (sistema/escuro) */
+.fotografar-content {
+  --ion-background-color: #1f4552;
+  --background: linear-gradient(180deg, #c15261 0%, #c15261 32%, #244d5a 50%, #1f4552 100%);
+  --color: #fff;
+  box-sizing: border-box;
+}
+
+.fotografar-scroll-filler {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.fotografar-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100%;
+  min-height: -webkit-fill-available;
+  /* Recompõe a altura quando o conteúdo curto; reduz o “vazio” escuro (com --background do ion) */
+  flex-grow: 1;
+  /* Telefone: leitura confortável; tablets passam a usar muito mais largura (ver @media) */
+  max-width: min(100%, 36rem);
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 0 env(safe-area-inset-left, 0) 0 env(safe-area-inset-right, 0);
+}
+
+.fotografar-hero {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(8px, 2vw, 20px);
+  min-height: clamp(72px, 12vw, 96px);
+  /* Um pouco mais de ar no topo; safe-area + ~10px face ao valor anterior */
+  padding: calc(max(10px, env(safe-area-inset-top, 0px)) + 10px) clamp(16px, 3.5vw, 28px) 8px;
+  background: #c15261;
+  overflow: hidden;
+}
+
+.fotografar-greet {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  color: #ffffff;
+  /* Tipografia: `font-playwrite` em `global.scss` (Playwrite US Trad) */
+  font-size: clamp(1.2rem, 2.5vw + 0.5rem, 1.9rem);
+  line-height: 1.2;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+
+.fotografar-hero-logo {
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.fotografar-hero-img {
+  display: block;
+  width: auto;
+  height: clamp(56px, 8.5vw, 88px);
+  max-width: min(32vw, 140px);
+  object-fit: contain;
+  /* Traço claro lê-se como “logo branco” sobre o gradiente */
+  filter: brightness(0) invert(1) drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+  opacity: 0.98;
+}
+
+.fotografar-shell {
+  flex: 1 0 auto;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+  /* topo mais curto: menos intervalo entre header e card */
+  padding: clamp(6px, 1.2vw, 12px) clamp(12px, 3.5vw, 28px)
+    max(20px, env(safe-area-inset-bottom) + 8px);
+  /* Continua a paleta; o `ion-content` trata da área total; aqui a coluna mantém a leitura do gradiente */
+  background: linear-gradient(180deg, #c15261 0%, #c15261 45%, #1f4552 100%);
+}
+
+.fotografar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Só o “aço do card”; campos (select, inputs, mídia, botão) mantêm as classes atuais */
+.fotografar-form-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: clamp(16px, 2.2vw, 24px) clamp(14px, 2.8vw, 28px);
+  background: #ffffff;
+  background-color: #ffffff;
+  /* Evita que `prefers-color-scheme: dark` / tema Ionic deixe o bloco acinzentado */
+  --ion-background-color: #ffffff;
+  --ion-item-background: #ffffff;
+  color-scheme: only light;
+  border-radius: clamp(14px, 2.2vw, 20px);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.1),
+    0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.fotografar-form-card > *:not(:first-child) {
+  margin-top: 0;
+  padding-top: clamp(12px, 2vw, 16px);
+  border-top: 1px solid #ebebeb;
+}
+
+/* Rótulo estava a branco para o fundo rosa; no card precisa de contraste */
+.fotografar-form-card .field-label {
+  color: #2c2c2c;
+}
+
+.select-shell {
+  --background: #ffffff;
+  --ion-background-color: #ffffff;
+  background-color: #ffffff;
+  --border-radius: 12px;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 56px;
+  display: block;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+  color-scheme: only light;
+}
+
+.evento-select {
+  --background: #ffffff;
+  --ion-background-color: #ffffff;
+  --color: #434a55;
+  color: #434a55;
+  --placeholder-color: #6b7179;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  width: 100%;
+  min-height: 56px;
+  --border-width: 0;
+  /* Linha (Material) no foco / clique: rosa do projeto */
+  --highlight-color-focused: #c15261;
+  --highlight-height: 2px;
+  font-size: 1rem;
+  border-radius: 12px;
+  color-scheme: only light;
+}
+
+/* MD, sem rótulo: a linha interna não esticava; o chevron acompanhava o texto. Estica e fixa o ícone à direita. */
+:host ::ng-deep .select-shell .evento-select::part(wrapper) {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .select-shell .evento-select::part(inner) {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+}
+
+:host ::ng-deep .select-shell .evento-select::part(container) {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+:host ::ng-deep .select-shell .evento-select::part(text) {
+  color: #434a55;
+}
+
+:host ::ng-deep .select-shell .evento-select::part(icon) {
+  flex-shrink: 0;
+  margin-inline-start: auto;
+  color: #c15261;
+}
+
+.field-block {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.field-label {
+  color: #ffffff;
+  font-size: clamp(0.9rem, 3.2vw, 0.95rem);
+  font-weight: 500;
+  margin: 0 0 8px 2px;
+}
+
+.guest-input {
+  --background: #ffffff;
+  --ion-background-color: #ffffff;
+  --color: #434a55;
+  color: #434a55;
+  --placeholder-color: #7a8087;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 18px;
+  --padding-bottom: 18px;
+  min-height: 56px;
+  --min-height: 56px;
+  --border-radius: 12px;
+  --border-width: 0;
+  font-size: 1rem;
+  border-radius: 12px;
+  --highlight-color-focused: #c15261;
+  --highlight-height: 1px;
+  color-scheme: only light;
+}
+
+/* Garante host interno do Ionic (md) com branco, não step cinza do tema */
+:host ::ng-deep .fotografar-form-card ion-select.evento-select,
+:host ::ng-deep .fotografar-form-card ion-input.guest-input {
+  --background: #ffffff;
+  --ion-background-color: #ffffff;
+}
+
+:host ::ng-deep ion-input.guest-input .native-input {
+  outline: none;
+  font-family: var(--ion-font-family, "Roboto Serif", Georgia, serif);
+}
+
+.foto-input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.media-block {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Sem foto: faixa larga (layout original) */
+.media-empty-shell {
+  width: 100%;
+  display: block;
+}
+
+.media-empty-shell .media-zone {
+  min-height: clamp(120px, 18vw, 200px);
+  max-height: min(50vh, 360px);
+  height: auto;
+  flex: none;
+}
+
+.media-empty-shell .media-placeholder {
+  flex: 0 1 auto;
+  max-width: 18rem;
+  margin: 0 auto;
+}
+
+/* Com foto: bloco em retrato no tamanho máximo disponível */
+.media-portrait-shell {
+  width: min(100%, 20rem);
+  max-width: 100%;
+  max-height: min(78vh, 36rem);
+  aspect-ratio: 3 / 4;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  align-self: center;
+}
+
+.media-card-filled {
+  position: relative;
+  display: flex;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+.media-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: clamp(14px, 2.5vw, 22px) clamp(10px, 2vw, 16px);
+  text-align: center;
+  background: #fff5f6;
+  border: 1.5px dashed #e08090;
+  border-radius: 14px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.media-card-filled .media-zone--preview {
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.media-zone--preview {
+  padding: 10px;
+}
+
+.media-placeholder {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  max-width: 16rem;
+  margin: 0 auto;
+}
+
+.media-icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f0c4cc;
+  margin-bottom: 14px;
+}
+
+:host ::ng-deep .media-icon-circle .media-icon {
+  width: 32px;
+  height: 32px;
+  color: #b84458;
+}
+
+.media-title {
+  margin: 0 0 4px 0;
+  color: #1a2540;
+  font-size: clamp(0.9rem, 2.8vw, 0.98rem);
+  line-height: 1.3;
+  font-weight: 700;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  letter-spacing: 0.01em;
+}
+
+.media-sub {
+  margin: 0;
+  color: #6b6f78;
+  font-size: clamp(0.8rem, 2.4vw, 0.86rem);
+  line-height: 1.4;
+  font-weight: 400;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+}
+
+.media-preview-frame {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.media-preview {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 6px;
+}
+
+.media-excluir-foto {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #c15261;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.media-excluir-foto:hover {
+  background: #9d3c4a;
+}
+
+.media-excluir-foto:active {
+  transform: scale(0.95);
+}
+
+:host ::ng-deep .media-excluir-foto .media-excluir-ico {
+  width: 22px;
+  height: 22px;
+  color: #ffffff;
+}
+
+.submit-foto {
+  min-height: 56px;
+  --min-height: 56px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  letter-spacing: 0.04em;
+  --background: #8f3a4a;
+  --color: #ffffff;
+  --color-activated: #ffffff;
+  --color-hover: #ffffff;
+  --color-focused: #ffffff;
+  --background-activated: #762f3d;
+  --background-hover: #9a4454;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  margin: 0;
+  font-family: var(--ion-font-family, "Roboto Serif", Georgia, serif);
+}
+
+.historico {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.historico-titulo {
+  color: #ffffff;
+  font-size: clamp(1.02rem, 3.4vw, 1.12rem);
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  text-align: left;
+  font-family: var(--ion-font-family, "Roboto Serif", Georgia, serif);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  min-height: 50px;
+  --padding: 0;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+}
+
+.search-ico {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  color: #8a8a8a;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-input {
+  --background: #ffffff;
+  --color: #1e1e1e;
+  --placeholder-color: #7a7a7a;
+  --padding-start: 42px;
+  --padding-end: 14px;
+  min-height: 50px;
+  --min-height: 50px;
+  --border-width: 0;
+  --highlight-height: 0;
+  --highlight-color-focused: #26505f;
+  width: 100%;
+  font-size: 0.95rem;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  border-radius: 12px;
+}
+
+.envios-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px clamp(12px, 1.5vw, 20px);
+  align-items: start;
+  padding-bottom: 8px;
+}
+
+.envio-card {
+  margin: 0;
+  width: 100%;
+}
+
+.envio-thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  max-height: min(220px, 42vw);
+  background: #d3d1d0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.envio-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.envio-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9a9896;
+  font-size: 2.2rem;
+}
+
+.envio-cam {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  background: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+:host ::ng-deep .envio-cam ion-icon {
+  color: #ffffff;
+  width: 14px;
+  height: 14px;
+}
+
+.envio-meta {
+  margin: 6px 0 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.78rem;
+  line-height: 1.25;
+  font-weight: 500;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.historico-vazio {
+  grid-column: 1 / -1;
+  margin: 8px 0 0 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.92rem;
+}
+
+@media (min-width: 480px) {
+  .fotografar-page {
+    max-width: min(100%, 42rem);
+  }
+}
+
+/* Tablet retrato / phablet */
+@media (min-width: 600px) {
+  .fotografar-page {
+    max-width: min(100%, 52rem);
+  }
+
+  .fotografar-shell {
+    padding-left: clamp(20px, 2.2vw, 32px);
+    padding-right: clamp(20px, 2.2vw, 32px);
+  }
+
+  .envios-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* iPad e similares: coluna quase a largura útil */
+@media (min-width: 900px) {
+  .fotografar-page {
+    max-width: min(100%, 64rem);
+  }
+
+  .envios-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Tablet paisagem / ecrã largo: mais uma faixa de leitura */
+@media (min-width: 1200px) {
+  .fotografar-page {
+    max-width: min(100%, 72rem);
+  }
+}

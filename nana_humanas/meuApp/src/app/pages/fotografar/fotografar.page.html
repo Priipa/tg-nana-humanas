@@ -1,15 +1,166 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>fotografar</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" [scrollY]="true" class="fotografar-content">
+  <div class="fotografar-scroll-filler">
+  <div class="fotografar-page">
+    <header class="fotografar-hero" aria-label="Cabeçalho">
+      <p class="fotografar-greet font-playwrite">Olá, <span class="fotografar-greet-name">{{ userName() }}</span>!</p>
+      <div class="fotografar-hero-logo">
+        <img
+          class="fotografar-hero-img"
+          src="assets/icon/logo-minimalista.png"
+          width="120"
+          height="120"
+          alt="Nana de Humanas"
+        />
+      </div>
+    </header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">fotografar</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <div class="fotografar-shell">
+      <section class="fotografar-form" aria-label="Enviar foto de convidado">
+      <input
+        #cameraInput
+        type="file"
+        accept="image/*"
+        capture="environment"
+        class="foto-input-hidden"
+        (change)="onFotoTrocada($event)"
+        aria-hidden="true"
+        tabindex="-1"
+      />
+        <div class="fotografar-form-card">
+      <div class="select-shell">
+        <ion-select
+          [value]="eventoId()"
+          (ionChange)="onEventoChange($event)"
+          [interfaceOptions]="{ header: 'Selecione o evento' }"
+          interface="action-sheet"
+          cancelText="Cancelar"
+          placeholder="Selecione o evento"
+          labelPlacement="start"
+          justify="space-between"
+          class="evento-select"
+        >
+          @for (e of eventos; track e.id) {
+            <ion-select-option [value]="e.id">{{ e.titulo }}</ion-select-option>
+          }
+        </ion-select>
+      </div>
 
-  <app-explore-container name="fotografar"></app-explore-container>
+      <div class="field-block">
+
+        <ion-input
+          id="foto-guest"
+          class="guest-input"
+          type="text"
+          [value]="guestName()"
+          (ionInput)="onGuestInput($event)"
+          [counter]="false"
+          placeholder="Digite o nome do convidado"
+          inputmode="text"
+          autocapitalize="words"
+        ></ion-input>
+      </div>
+
+      <div class="media-block">
+        @if (previewUrl(); as url) {
+          <div class="media-portrait-shell">
+            <div class="media-card-filled">
+              <button
+                type="button"
+                class="media-zone media-zone--preview"
+                (click)="abrirFotoPeloCard()"
+                aria-label="Trocar foto. Toque para escolher outra foto do convidado."
+              >
+                <div class="media-preview-frame">
+                  <img [src]="url" alt="Pré-visualização da foto" class="media-preview" />
+                </div>
+              </button>
+              <button
+                type="button"
+                class="media-excluir-foto"
+                (click)="excluirFotoPrevia($event)"
+                aria-label="Remover foto selecionada"
+              >
+                <ion-icon class="media-excluir-ico" name="close" />
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div class="media-empty-shell">
+            <button
+              type="button"
+              class="media-zone"
+              (click)="abrirFotoPeloCard()"
+              aria-label="Tirar foto ou selecionar da galeria. Toque para adicionar a foto do convidado."
+            >
+              <div class="media-placeholder" aria-hidden="true">
+                <div class="media-icon-circle">
+                  <ion-icon name="camera-outline" class="media-icon" />
+                </div>
+                <p class="media-title">Tirar foto ou selecionar da galeria</p>
+                <p class="media-sub">Toque para adicionar a foto do convidado</p>
+              </div>
+            </button>
+          </div>
+        }
+      </div>
+
+      <ion-button
+        expand="block"
+        class="submit-foto"
+        (click)="cadastrarEEnviar()"
+        [disabled]="!podeEnviar()"
+      >
+        CADASTRAR E ENVIAR
+      </ion-button>
+        </div>
+      </section>
+
+      <section class="historico" aria-labelledby="historico-titulo">
+      <h2 id="historico-titulo" class="historico-titulo">
+        Histórico de envios ({{ totalEnvios() }} {{ totalEnvios() === 1 ? 'foto' : 'fotos' }})
+      </h2>
+      <div class="search-wrap">
+        <ion-icon class="search-ico" name="search-outline" />
+        <ion-input
+          class="search-input"
+          type="search"
+          [value]="searchQuery()"
+          (ionInput)="onSearchInput($event)"
+          [counter]="false"
+          placeholder="Pesquisar convidado"
+        ></ion-input>
+      </div>
+
+      <div class="envios-grid" role="list">
+        @for (item of historicoFiltrado(); track item.id) {
+          <article class="envio-card" role="listitem">
+            <div class="envio-thumb">
+              @if (item.thumbUrl) {
+                <img [src]="item.thumbUrl" [alt]="'Foto de ' + item.nome" class="envio-img" />
+              } @else {
+                <div class="envio-placeholder" aria-hidden="true">
+                  <ion-icon name="image-outline" />
+                </div>
+              }
+              <span class="envio-cam" aria-hidden="true">
+                <ion-icon name="camera-outline" />
+              </span>
+            </div>
+            <p class="envio-meta">Nome: {{ item.nome }}</p>
+          </article>
+        }
+        @if (historicoFiltrado().length === 0) {
+          <p class="historico-vazio">
+            @if (searchQuery().trim() !== "") {
+              Nenhum envio com esse nome.
+            } @else {
+              Nenhum envio ainda.
+            }
+          </p>
+        }
+      </div>
+      </section>
+    </div>
+  </div>
+  </div>
 </ion-content>

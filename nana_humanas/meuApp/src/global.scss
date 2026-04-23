@@ -53,6 +53,13 @@ html {
   --app-font-display: "Playwrite US Trad", "Segoe Script", cursive;
 }
 
+/* Reserva: entre tabs e ecrã, o sistema escuro não deixa “nada” preto por defeito */
+html,
+body,
+ion-app {
+  background-color: #1f4552;
+}
+
 /**
  * Playwrite US Trad: use em `ion-title`, headings, etc.
  * `!important` vence o clone do Ionic e estilos no shadow de `ion-title`.
@@ -61,4 +68,15 @@ html {
 .title-playwrite {
   font-family: var(--app-font-display) !important;
   font-weight: 400 !important;
+}
+
+/* Action sheet “Tirar foto / Galeria” (modo iOS): fundo claro + rosa #c15261 (incl. Cancelar) */
+ion-action-sheet.fotografar-foto-action-sheet {
+  --background: #ffffff;
+  /* Texto de todos os botões (Tirar foto, Galeria, Cancelar) */
+  --button-color: #c15261;
+  --button-color-activated: #9d3c4a;
+  /* Barra de fundo do botão Cancelar (.action-sheet-cancel::after) */
+  --button-background-selected: #fff5f6;
+  --button-background-selected-opacity: 1;
 }

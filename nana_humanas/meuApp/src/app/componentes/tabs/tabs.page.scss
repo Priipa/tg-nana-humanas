@@ -1,4 +1,7 @@
 ion-tab-bar {
+  /* Padrão Ionic ~56px; leve incremento de área tocável e respiro visual */
+  min-height: 64px;
+  height: auto;
   --background: #26505f;
   --color: rgba(255, 255, 255, 0.78);
   --color-focused: #ffffff;
