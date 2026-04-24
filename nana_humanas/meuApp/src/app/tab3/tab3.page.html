@@ -1,15 +1,11 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>aquarelar</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" [scrollY]="true" class="nana-app-page-content">
+  <div class="nana-app-page-scroll">
+    <div class="nana-app-page">
+      <app-custom-header />
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">aquarelar</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <app-explore-container name="aquarelar"></app-explore-container>
+      <div class="nana-app-page-body nana-app-page-body--centered-fill">
+        <app-explore-container name="Aquarelar" />
+      </div>
+    </div>
+  </div>
 </ion-content>

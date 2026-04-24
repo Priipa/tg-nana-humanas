@@ -1,0 +1,75 @@
+/* Layout partilhado: ion-content + coluna (tabs Fotografar, verm, aquarelar). */
+.nana-app-page-content {
+  --ion-background-color: #1f4552;
+  --background: linear-gradient(180deg, #c15261 0%, #c15261 32%, #244d5a 50%, #1f4552 100%);
+  --color: #fff;
+  box-sizing: border-box;
+}
+
+.nana-app-page-scroll {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.nana-app-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100%;
+  min-height: -webkit-fill-available;
+  flex-grow: 1;
+  max-width: min(100%, 36rem);
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 0 env(safe-area-inset-left, 0) 0 env(safe-area-inset-right, 0);
+}
+
+.nana-app-page-body {
+  flex: 1 0 auto;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: clamp(6px, 1.2vw, 12px) clamp(12px, 3.5vw, 28px) max(20px, env(safe-area-inset-bottom) + 8px);
+  background: linear-gradient(180deg, #c15261 0%, #c15261 45%, #1f4552 100%);
+}
+
+/** Blocos com conteúdo `position: absolute; top: 50%` (p.ex. explore placeholder) */
+.nana-app-page-body--centered-fill {
+  position: relative;
+  min-height: min(70dvh, 100%);
+  display: block;
+  flex: 1 1 auto;
+}
+
+@media (min-width: 480px) {
+  .nana-app-page {
+    max-width: min(100%, 42rem);
+  }
+}
+
+@media (min-width: 600px) {
+  .nana-app-page {
+    max-width: min(100%, 52rem);
+  }
+
+  .nana-app-page-body {
+    padding-left: clamp(20px, 2.2vw, 32px);
+    padding-right: clamp(20px, 2.2vw, 32px);
+  }
+}
+
+@media (min-width: 900px) {
+  .nana-app-page {
+    max-width: min(100%, 64rem);
+  }
+}
+
+@media (min-width: 1200px) {
+  .nana-app-page {
+    max-width: min(100%, 72rem);
+  }
+}

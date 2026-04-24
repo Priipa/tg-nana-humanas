@@ -1,10 +1,23 @@
+import { isPlatformBrowser } from '@angular/common';
 import { Camera, CameraDirection, type MediaResult, MediaType } from '@capacitor/camera';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { Capacitor } from '@capacitor/core';
-import { Component, computed, ElementRef, inject, OnDestroy, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  OnDestroy,
+  PLATFORM_ID,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActionSheetController, ToastController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
+import { fromEvent } from 'rxjs';
 import { close, cameraOutline, imageOutline, searchOutline } from 'ionicons/icons';
+import { CustomHeaderComponent } from '../../componentes/custom-header/custom-header.component';
 import {
   IonButton,
   IonContent,
@@ -22,11 +35,12 @@ export type EnvioHistorico = { id: string; nome: string; thumbUrl: string };
   selector: 'app-fotografar',
   templateUrl: 'fotografar.page.html',
   styleUrls: ['fotografar.page.scss'],
-  imports: [IonContent, IonButton, IonIcon, IonInput, IonSelect, IonSelectOption],
+  imports: [IonContent, IonButton, IonIcon, IonInput, IonSelect, IonSelectOption, CustomHeaderComponent],
 })
 export class FotografarPage implements OnDestroy {
   private readonly actionSheetController = inject(ActionSheetController);
   private readonly toastController = inject(ToastController);
+  private readonly platformId = inject(PLATFORM_ID);
 
   /** O `#cameraInput` no template é exposto como `ElementRef` — usar `.nativeElement` para `.click()`. */
   private readonly cameraInput = viewChild.required<ElementRef<HTMLInputElement>>('cameraInput');
@@ -47,6 +61,12 @@ export class FotografarPage implements OnDestroy {
 
   private nextEnvioId = 3;
 
+  /** Número de colunas de `.envios-grid` (igual a `fotografar.page.scss`: <600=2, 600–899=3, 900+=4). */
+  private readonly historicoColunas = signal(2);
+
+  /** Fileiras mostradas no histórico: início 2; cada "Ver mais" +2. */
+  private readonly fileirasExibidasHistorico = signal(2);
+
   historico = signal<EnvioHistorico[]>([
     { id: 'h-1', nome: 'Mariana Ayres', thumbUrl: '' },
     { id: 'h-2', nome: 'Mariana Ayres', thumbUrl: '' },
@@ -62,6 +82,19 @@ export class FotografarPage implements OnDestroy {
     return this.historico().filter((h) => h.nome.toLowerCase().includes(q));
   });
 
+  private readonly limiteItensHistorico = computed(
+    () => this.historicoColunas() * this.fileirasExibidasHistorico()
+  );
+
+  /** Lista já cortada às fileiras visíveis (2 iniciais; +2 fileiras por "Ver mais"). */
+  historicoExibido = computed(() => {
+    return this.historicoFiltrado().slice(0, this.limiteItensHistorico());
+  });
+
+  mostrarVerMaisHistorico = computed(
+    () => this.historicoFiltrado().length > this.historicoExibido().length
+  );
+
   podeEnviar = computed(
     () =>
       this.eventoId() !== undefined &&
@@ -71,6 +104,22 @@ export class FotografarPage implements OnDestroy {
 
   constructor() {
     addIcons({ close, cameraOutline, imageOutline, searchOutline });
+
+    if (isPlatformBrowser(this.platformId)) {
+      this.updateHistoricoColunasParaLargura();
+      fromEvent(window, 'resize', { passive: true })
+        .pipe(takeUntilDestroyed())
+        .subscribe(() => this.updateHistoricoColunasParaLargura());
+    }
+  }
+
+  private updateHistoricoColunasParaLargura(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const w = window.innerWidth;
+    const c = w >= 900 ? 4 : w >= 600 ? 3 : 2;
+    this.historicoColunas.set(c);
   }
 
   onEventoChange(event: CustomEvent): void {
@@ -88,6 +137,11 @@ export class FotografarPage implements OnDestroy {
   onSearchInput(event: Event): void {
     const e = event as CustomEvent<{ value?: string | null }>;
     this.searchQuery.set(e.detail.value ?? '');
+    this.fileirasExibidasHistorico.set(2);
+  }
+
+  verMaisHistorico(): void {
+    this.fileirasExibidasHistorico.update((f) => f + 2);
   }
 
   private liberarPrevia(): void {

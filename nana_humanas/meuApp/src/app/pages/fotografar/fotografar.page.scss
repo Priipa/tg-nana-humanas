@@ -1,3 +1,5 @@
+@use '../../componentes/custom-header/nana-app-page-layout' as *;
+
 :host {
   display: block;
   width: 100%;
@@ -6,94 +8,6 @@
   /* Reduz “scroll” horizontal acidental (margens, 100vw, etc.) */
   overflow-x: hidden;
   box-sizing: border-box;
-}
-
-/* Preenchimento da altura: sem transparent, para nunca revelar o fundo preto (sistema/escuro) */
-.fotografar-content {
-  --ion-background-color: #1f4552;
-  --background: linear-gradient(180deg, #c15261 0%, #c15261 32%, #244d5a 50%, #1f4552 100%);
-  --color: #fff;
-  box-sizing: border-box;
-}
-
-.fotografar-scroll-filler {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.fotografar-page {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-height: 100%;
-  min-height: -webkit-fill-available;
-  /* Recompõe a altura quando o conteúdo curto; reduz o “vazio” escuro (com --background do ion) */
-  flex-grow: 1;
-  /* Telefone: leitura confortável; tablets passam a usar muito mais largura (ver @media) */
-  max-width: min(100%, 36rem);
-  margin: 0 auto;
-  box-sizing: border-box;
-  padding: 0 env(safe-area-inset-left, 0) 0 env(safe-area-inset-right, 0);
-}
-
-.fotografar-hero {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: clamp(8px, 2vw, 20px);
-  min-height: clamp(72px, 12vw, 96px);
-  /* Um pouco mais de ar no topo; safe-area + ~10px face ao valor anterior */
-  padding: calc(max(10px, env(safe-area-inset-top, 0px)) + 10px) clamp(16px, 3.5vw, 28px) 8px;
-  background: #c15261;
-  overflow: hidden;
-}
-
-.fotografar-greet {
-  margin: 0;
-  flex: 1;
-  min-width: 0;
-  text-align: left;
-  color: #ffffff;
-  /* Tipografia: `font-playwrite` em `global.scss` (Playwrite US Trad) */
-  font-size: clamp(1.2rem, 2.5vw + 0.5rem, 1.9rem);
-  line-height: 1.2;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  z-index: 1;
-}
-
-.fotografar-hero-logo {
-  flex-shrink: 0;
-  z-index: 1;
-}
-
-.fotografar-hero-img {
-  display: block;
-  width: auto;
-  height: clamp(56px, 8.5vw, 88px);
-  max-width: min(32vw, 140px);
-  object-fit: contain;
-  /* Traço claro lê-se como “logo branco” sobre o gradiente */
-  filter: brightness(0) invert(1) drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
-  opacity: 0.98;
-}
-
-.fotografar-shell {
-  flex: 1 0 auto;
-  min-height: 0;
-  width: 100%;
-  box-sizing: border-box;
-  /* topo mais curto: menos intervalo entre header e card */
-  padding: clamp(6px, 1.2vw, 12px) clamp(12px, 3.5vw, 28px)
-    max(20px, env(safe-area-inset-bottom) + 8px);
-  /* Continua a paleta; o `ion-content` trata da área total; aqui a coluna mantém a leitura do gradiente */
-  background: linear-gradient(180deg, #c15261 0%, #c15261 45%, #1f4552 100%);
 }
 
 .fotografar-form {
@@ -265,7 +179,7 @@
   width: 100%;
 }
 
-/* Sem foto: faixa larga (layout original) */
+/* Sem foto: faixa do card larga e flexível (altura mín/máx, não 3:4) */
 .media-empty-shell {
   width: 100%;
   display: block;
@@ -284,7 +198,7 @@
   margin: 0 auto;
 }
 
-/* Com foto: bloco em retrato no tamanho máximo disponível */
+/* Com preview: bloco 3:4 (fotos verticais) */
 .media-portrait-shell {
   width: min(100%, 20rem);
   max-width: 100%;
@@ -339,8 +253,9 @@
   justify-content: center;
   width: 100%;
   min-height: 0;
-  max-width: 16rem;
+  max-width: 15rem;
   margin: 0 auto;
+  padding: 0 4px;
 }
 
 .media-icon-circle {
@@ -498,13 +413,16 @@
 }
 
 .search-input {
+  /* Mesmos cantos do login (custom-input) e do guest-input nesta tela: --border-radius + border-radius */
   --background: #ffffff;
+  --ion-background-color: #ffffff;
   --color: #1e1e1e;
   --placeholder-color: #7a7a7a;
   --padding-start: 42px;
   --padding-end: 14px;
   min-height: 50px;
   --min-height: 50px;
+  --border-radius: 12px;
   --border-width: 0;
   --highlight-height: 0;
   --highlight-color-focused: #26505f;
@@ -512,6 +430,11 @@
   font-size: 0.95rem;
   font-family: system-ui, "Segoe UI", Roboto, sans-serif;
   border-radius: 12px;
+  color-scheme: only light;
+}
+
+:host ::ng-deep .search-wrap ion-input.search-input .native-input {
+  outline: none;
 }
 
 .envios-grid {
@@ -531,8 +454,8 @@
   position: relative;
   width: 100%;
   aspect-ratio: 3 / 4;
-  max-height: min(220px, 42vw);
-  background: #d3d1d0;
+  max-height: min(320px, 55vw);
+  background: #e8e6e4;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -540,7 +463,8 @@
 .envio-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   display: block;
 }
 
@@ -593,42 +517,49 @@
   font-size: 0.92rem;
 }
 
-@media (min-width: 480px) {
-  .fotografar-page {
-    max-width: min(100%, 42rem);
-  }
+.historico-ver-mais-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+  padding-bottom: 4px;
 }
 
-/* Tablet retrato / phablet */
+.historico-ver-mais {
+  margin: 0;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: var(--ion-font-family, "Roboto Serif", Georgia, serif);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.historico-ver-mais:hover,
+.historico-ver-mais:focus-visible {
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration-thickness: 2px;
+}
+
+.historico-ver-mais:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.45);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Grelha do histórico: alinhar colunas ao `nana-app-page-layout` (2 → 3 → 4) */
 @media (min-width: 600px) {
-  .fotografar-page {
-    max-width: min(100%, 52rem);
-  }
-
-  .fotografar-shell {
-    padding-left: clamp(20px, 2.2vw, 32px);
-    padding-right: clamp(20px, 2.2vw, 32px);
-  }
-
   .envios-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-/* iPad e similares: coluna quase a largura útil */
 @media (min-width: 900px) {
-  .fotografar-page {
-    max-width: min(100%, 64rem);
-  }
-
   .envios-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-/* Tablet paisagem / ecrã largo: mais uma faixa de leitura */
-@media (min-width: 1200px) {
-  .fotografar-page {
-    max-width: min(100%, 72rem);
   }
 }

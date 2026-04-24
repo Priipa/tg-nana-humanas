@@ -1,20 +1,9 @@
-<ion-content [fullscreen]="true" [scrollY]="true" class="fotografar-content">
-  <div class="fotografar-scroll-filler">
-  <div class="fotografar-page">
-    <header class="fotografar-hero" aria-label="Cabeçalho">
-      <p class="fotografar-greet font-playwrite">Olá, <span class="fotografar-greet-name">{{ userName() }}</span>!</p>
-      <div class="fotografar-hero-logo">
-        <img
-          class="fotografar-hero-img"
-          src="assets/icon/logo-minimalista.png"
-          width="120"
-          height="120"
-          alt="Nana de Humanas"
-        />
-      </div>
-    </header>
+<ion-content [fullscreen]="true" [scrollY]="true" class="nana-app-page-content">
+  <div class="nana-app-page-scroll">
+  <div class="nana-app-page">
+    <app-custom-header [userName]="userName()" />
 
-    <div class="fotografar-shell">
+    <div class="nana-app-page-body">
       <section class="fotografar-form" aria-label="Enviar foto de convidado">
       <input
         #cameraInput
@@ -132,7 +121,7 @@
       </div>
 
       <div class="envios-grid" role="list">
-        @for (item of historicoFiltrado(); track item.id) {
+        @for (item of historicoExibido(); track item.id) {
           <article class="envio-card" role="listitem">
             <div class="envio-thumb">
               @if (item.thumbUrl) {
@@ -159,6 +148,18 @@
           </p>
         }
       </div>
+
+      @if (mostrarVerMaisHistorico()) {
+        <div class="historico-ver-mais-wrap">
+          <button
+            type="button"
+            class="historico-ver-mais"
+            (click)="verMaisHistorico()"
+          >
+            Ver mais
+          </button>
+        </div>
+      }
       </section>
     </div>
   </div>
