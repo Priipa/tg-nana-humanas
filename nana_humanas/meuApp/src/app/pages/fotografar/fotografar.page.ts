@@ -16,8 +16,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActionSheetController, ToastController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { fromEvent } from 'rxjs';
-import { close, cameraOutline, imageOutline, searchOutline } from 'ionicons/icons';
+import { close, cameraOutline, searchOutline } from 'ionicons/icons';
 import { CustomHeaderComponent } from '../../componentes/custom-header/custom-header.component';
+import { FotoCardComponent } from '../../componentes/foto-card/foto-card.component';
 import {
   IonButton,
   IonContent,
@@ -29,13 +30,19 @@ import {
 
 export type EventoOption = { id: string; titulo: string };
 
-export type EnvioHistorico = { id: string; nome: string; thumbUrl: string };
+export type EnvioHistorico = {
+  id: string;
+  nome: string;
+  thumbUrl: string;
+  /** Nome de quem registou / tirou a foto */
+  fotografo: string;
+};
 
 @Component({
   selector: 'app-fotografar',
   templateUrl: 'fotografar.page.html',
   styleUrls: ['fotografar.page.scss'],
-  imports: [IonContent, IonButton, IonIcon, IonInput, IonSelect, IonSelectOption, CustomHeaderComponent],
+  imports: [IonContent, IonButton, IonIcon, IonInput, IonSelect, IonSelectOption, CustomHeaderComponent, FotoCardComponent],
 })
 export class FotografarPage implements OnDestroy {
   private readonly actionSheetController = inject(ActionSheetController);
@@ -68,8 +75,8 @@ export class FotografarPage implements OnDestroy {
   private readonly fileirasExibidasHistorico = signal(2);
 
   historico = signal<EnvioHistorico[]>([
-    { id: 'h-1', nome: 'Mariana Ayres', thumbUrl: '' },
-    { id: 'h-2', nome: 'Mariana Ayres', thumbUrl: '' },
+    { id: 'h-1', nome: 'Fernando Henrique Nascimento', thumbUrl: '', fotografo: 'Giovanna' },
+    { id: 'h-2', nome: 'Mariana Ayres', thumbUrl: '', fotografo: 'Giovanna Nascimento' },
   ]);
 
   totalEnvios = computed(() => this.historico().length);
@@ -79,7 +86,10 @@ export class FotografarPage implements OnDestroy {
     if (!q) {
       return this.historico();
     }
-    return this.historico().filter((h) => h.nome.toLowerCase().includes(q));
+    return this.historico().filter(
+      (h) =>
+        h.nome.toLowerCase().includes(q) || h.fotografo.toLowerCase().includes(q)
+    );
   });
 
   private readonly limiteItensHistorico = computed(
@@ -103,7 +113,7 @@ export class FotografarPage implements OnDestroy {
   );
 
   constructor() {
-    addIcons({ close, cameraOutline, imageOutline, searchOutline });
+    addIcons({ close, cameraOutline, searchOutline });
 
     if (isPlatformBrowser(this.platformId)) {
       this.updateHistoricoColunasParaLargura();
@@ -316,8 +326,11 @@ export class FotografarPage implements OnDestroy {
     const nome = this.guestName().trim();
     const url = this.previewUrl()!;
     const id = `envio-${this.nextEnvioId++}`;
+    const fotografo = this.userName().trim() || '—';
 
-    this.historico.update((lista) => [{ id, nome, thumbUrl: url }, ...lista]);
+    this.historico.update(
+      (lista) => [{ id, nome, thumbUrl: url, fotografo }, ...lista]
+    );
 
     this.previewRevokable = null;
     this.previewUrl.set(null);

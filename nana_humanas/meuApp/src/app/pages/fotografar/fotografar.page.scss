@@ -141,7 +141,8 @@
   font-size: 1rem;
   border-radius: 12px;
   --highlight-color-focused: #c15261;
-  --highlight-height: 1px;
+  /* Com mode="md" o Ionic desenha .input-highlight; 2px alinha ao select do evento */
+  --highlight-height: 2px;
   color-scheme: only light;
 }
 
@@ -443,70 +444,6 @@
   gap: 12px clamp(12px, 1.5vw, 20px);
   align-items: start;
   padding-bottom: 8px;
-}
-
-.envio-card {
-  margin: 0;
-  width: 100%;
-}
-
-.envio-thumb {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  max-height: min(320px, 55vw);
-  background: #e8e6e4;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.envio-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center;
-  display: block;
-}
-
-.envio-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #9a9896;
-  font-size: 2.2rem;
-}
-
-.envio-cam {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 24px;
-  height: 24px;
-  background: #2563eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-:host ::ng-deep .envio-cam ion-icon {
-  color: #ffffff;
-  width: 14px;
-  height: 14px;
-}
-
-.envio-meta {
-  margin: 6px 0 0 0;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.78rem;
-  line-height: 1.25;
-  font-weight: 500;
-  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
-  text-align: left;
-  word-wrap: break-word;
 }
 
 .historico-vazio {

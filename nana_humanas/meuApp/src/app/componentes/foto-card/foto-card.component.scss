@@ -1,0 +1,78 @@
+:host {
+  display: block;
+  margin: 0;
+  width: 100%;
+}
+
+.foto-card {
+  margin: 0;
+  width: 100%;
+}
+
+.foto-card__thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  max-height: min(320px, 55vw);
+  background: #e8e6e4;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.foto-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+.foto-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9a9896;
+  font-size: 2.2rem;
+}
+
+.foto-card__cam {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  background: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+:host ::ng-deep .foto-card__cam ion-icon {
+  color: #ffffff;
+  width: 14px;
+  height: 14px;
+}
+
+.foto-card__meta {
+  margin: 6px 0 0 0;
+  padding-inline-start: 8px;
+  text-align: left;
+}
+
+.foto-card__line {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.78rem;
+  line-height: 1.25;
+  font-weight: 500;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  word-wrap: break-word;
+}
+
+.foto-card__line + .foto-card__line {
+  margin-top: 3px;
+}

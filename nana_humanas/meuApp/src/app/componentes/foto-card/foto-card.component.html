@@ -1,0 +1,22 @@
+<article class="foto-card" role="listitem">
+  <div class="foto-card__thumb">
+    @if (thumbUrl()) {
+      <img
+        [src]="thumbUrl()"
+        [alt]="'Foto de ' + nome()"
+        class="foto-card__img"
+      />
+    } @else {
+      <div class="foto-card__placeholder" aria-hidden="true">
+        <ion-icon name="image-outline" />
+      </div>
+    }
+    <span class="foto-card__cam" aria-hidden="true">
+      <ion-icon name="camera-outline" />
+    </span>
+  </div>
+  <div class="foto-card__meta">
+    <p class="foto-card__line">Nome: {{ nome() }}</p>
+    <p class="foto-card__line">Registro: {{ fotografo() }}</p>
+  </div>
+</article>

@@ -18,6 +18,7 @@
         <div class="fotografar-form-card">
       <div class="select-shell">
         <ion-select
+          mode="md"
           [value]="eventoId()"
           (ionChange)="onEventoChange($event)"
           [interfaceOptions]="{ header: 'Selecione o evento' }"
@@ -39,6 +40,7 @@
         <ion-input
           id="foto-guest"
           class="guest-input"
+          mode="md"
           type="text"
           [value]="guestName()"
           (ionInput)="onGuestInput($event)"
@@ -122,21 +124,11 @@
 
       <div class="envios-grid" role="list">
         @for (item of historicoExibido(); track item.id) {
-          <article class="envio-card" role="listitem">
-            <div class="envio-thumb">
-              @if (item.thumbUrl) {
-                <img [src]="item.thumbUrl" [alt]="'Foto de ' + item.nome" class="envio-img" />
-              } @else {
-                <div class="envio-placeholder" aria-hidden="true">
-                  <ion-icon name="image-outline" />
-                </div>
-              }
-              <span class="envio-cam" aria-hidden="true">
-                <ion-icon name="camera-outline" />
-              </span>
-            </div>
-            <p class="envio-meta">Nome: {{ item.nome }}</p>
-          </article>
+          <app-foto-card
+            [nome]="item.nome"
+            [fotografo]="item.fotografo"
+            [thumbUrl]="item.thumbUrl"
+          />
         }
         @if (historicoFiltrado().length === 0) {
           <p class="historico-vazio">
