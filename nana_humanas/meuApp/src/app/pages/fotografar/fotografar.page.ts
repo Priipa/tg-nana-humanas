@@ -32,11 +32,23 @@ export type EventoOption = { id: string; titulo: string };
 
 export type EnvioHistorico = {
   id: string;
+  /** Alinhado ao `eventoId` do `ion-select` */
+  eventoId: string;
   nome: string;
   thumbUrl: string;
   /** Nome de quem registou / tirou a foto */
   fotografo: string;
 };
+
+/**
+ * Mocks em `assets/fotos-mock` — ficheiros `{número}photo` (X = qualquer algarismo, ex. `1photo`, `2photo.jpeg`).
+ * Não usar `*aquarela*`, `*vetor*`, etc.
+ */
+const FOTOS_MOCK_PHOTO = [
+  'assets/fotos-mock/1photo.jpeg',
+  'assets/fotos-mock/2photo.jpeg',
+  'assets/fotos-mock/3photo.jpeg',
+] as const;
 
 @Component({
   selector: 'app-fotografar',
@@ -75,20 +87,49 @@ export class FotografarPage implements OnDestroy {
   private readonly fileirasExibidasHistorico = signal(2);
 
   historico = signal<EnvioHistorico[]>([
-    { id: 'h-1', nome: 'Fernando Henrique Nascimento', thumbUrl: '', fotografo: 'Giovanna' },
-    { id: 'h-2', nome: 'Mariana Ayres', thumbUrl: '', fotografo: 'Giovanna Nascimento' },
+    {
+      id: 'h-1',
+      eventoId: '1',
+      nome: 'Fernando Henrique Nascimento',
+      thumbUrl: FOTOS_MOCK_PHOTO[0],
+      fotografo: 'Giovanna',
+    },
+    {
+      id: 'h-2',
+      eventoId: '1',
+      nome: 'Mariana Ayres',
+      thumbUrl: FOTOS_MOCK_PHOTO[1],
+      fotografo: 'Giovanna Nascimento',
+    },
+    {
+      id: 'h-3',
+      eventoId: '2',
+      nome: 'Convidado A',
+      thumbUrl: FOTOS_MOCK_PHOTO[2],
+      fotografo: 'Giovanna',
+    },
   ]);
 
-  totalEnvios = computed(() => this.historico().length);
+  /** Envios só do evento escolhido no select. */
+  historicoDoEvento = computed(() => {
+    const e = this.eventoId();
+    if (e === undefined) {
+      return [] as EnvioHistorico[];
+    }
+    return this.historico().filter((h) => h.eventoId === e);
+  });
+
+  /** Número de fotos do evento atual (para o título). */
+  totalEnvios = computed(() => this.historicoDoEvento().length);
 
   historicoFiltrado = computed(() => {
+    const base = this.historicoDoEvento();
     const q = this.searchQuery().trim().toLowerCase();
     if (!q) {
-      return this.historico();
+      return base;
     }
-    return this.historico().filter(
-      (h) =>
-        h.nome.toLowerCase().includes(q) || h.fotografo.toLowerCase().includes(q)
+    return base.filter(
+      (h) => h.nome.toLowerCase().includes(q) || h.fotografo.toLowerCase().includes(q)
     );
   });
 
@@ -137,6 +178,7 @@ export class FotografarPage implements OnDestroy {
     this.eventoId.set(
       v === null || v === undefined || (typeof v === 'string' && v === '') ? undefined : String(v)
     );
+    this.fileirasExibidasHistorico.set(2);
   }
 
   onGuestInput(event: Event): void {
@@ -327,9 +369,10 @@ export class FotografarPage implements OnDestroy {
     const url = this.previewUrl()!;
     const id = `envio-${this.nextEnvioId++}`;
     const fotografo = this.userName().trim() || '—';
+    const eventoId = this.eventoId()!;
 
     this.historico.update(
-      (lista) => [{ id, nome, thumbUrl: url, fotografo }, ...lista]
+      (lista) => [{ id, eventoId, nome, thumbUrl: url, fotografo }, ...lista]
     );
 
     this.previewRevokable = null;

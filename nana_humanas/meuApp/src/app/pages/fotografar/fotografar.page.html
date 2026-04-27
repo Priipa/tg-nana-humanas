@@ -132,10 +132,12 @@
         }
         @if (historicoFiltrado().length === 0) {
           <p class="historico-vazio">
-            @if (searchQuery().trim() !== "") {
+            @if (eventoId() === undefined) {
+              Selecione o evento no formulário acima para ver o histórico.
+            } @else if (searchQuery().trim() !== "") {
               Nenhum envio com esse nome.
             } @else {
-              Nenhum envio ainda.
+              Nenhum envio ainda neste evento.
             }
           </p>
         }

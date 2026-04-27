@@ -1,0 +1,137 @@
+<ion-content [fullscreen]="true" [scrollY]="true" class="nana-app-page-content">
+  <div class="nana-app-page-scroll">
+    <div class="nana-app-page">
+      <app-custom-header />
+
+      <div class="nana-app-page-body vetorizar-body">
+        <section class="vetorizar-evento" aria-label="Vetorização: evento, totais e listas">
+          <div class="vetorizar-form-card">
+            <div class="select-shell">
+              <ion-select
+                mode="md"
+                [value]="eventoId()"
+                (ionChange)="onEventoChange($event)"
+                [interfaceOptions]="{ header: 'Selecione o evento' }"
+                interface="action-sheet"
+                cancelText="Cancelar"
+                placeholder="Selecione o evento"
+                labelPlacement="start"
+                justify="space-between"
+                class="evento-select"
+              >
+                @for (e of eventos; track e.id) {
+                  <ion-select-option [value]="e.id">{{ e.titulo }}</ion-select-option>
+                }
+              </ion-select>
+            </div>
+          </div>
+
+          <div class="vetorizar-stats" role="group" aria-label="Totais do evento">
+            <article class="vetorizar-stat-card">
+              <span class="vetorizar-stat-card__icon-wrap" aria-hidden="true">
+                <img
+                  class="vetorizar-stat-card__icon"
+                  src="assets/vetorizar/total.png"
+                  width="48"
+                  height="48"
+                  alt=""
+                />
+              </span>
+              <div class="vetorizar-stat-card__text">
+                <span class="vetorizar-stat-card__label">Total de Registro</span>
+                <span class="vetorizar-stat-card__value">{{ totalRegistros() }}</span>
+              </div>
+            </article>
+            <article class="vetorizar-stat-card">
+              <span class="vetorizar-stat-card__icon-wrap" aria-hidden="true">
+                <img
+                  class="vetorizar-stat-card__icon vetorizar-stat-card__icon--finalizado"
+                  src="assets/vetorizar/finalizado.png"
+                  width="48"
+                  height="48"
+                  alt=""
+                />
+              </span>
+              <div class="vetorizar-stat-card__text">
+                <span class="vetorizar-stat-card__label">Total de Vetorizado</span>
+                <span class="vetorizar-stat-card__value">{{ totalVetorizado() }}</span>
+              </div>
+            </article>
+          </div>
+
+          @if (eventoId()) {
+            <section
+              class="vetorizar-filtros"
+              aria-label="Filtrar por situação de vetorização"
+            >
+              <div
+                class="vetorizar-filtros__row"
+                role="tablist"
+                [attr.aria-label]="'Pendentes, em processo ou finalizados'"
+              >
+                <button
+                  type="button"
+                  class="vetorizar-filtro-btn"
+                  [class.vetorizar-filtro-btn--active]="isFiltroSituacao('pendentes')"
+                  (click)="selectFiltroSituacao('pendentes')"
+                  role="tab"
+                  [attr.aria-selected]="isFiltroSituacao('pendentes') ? 'true' : 'false'"
+                >
+                  Pendentes
+                </button>
+                <button
+                  type="button"
+                  class="vetorizar-filtro-btn"
+                  [class.vetorizar-filtro-btn--active]="isFiltroSituacao('em-processo')"
+                  (click)="selectFiltroSituacao('em-processo')"
+                  role="tab"
+                  [attr.aria-selected]="isFiltroSituacao('em-processo') ? 'true' : 'false'"
+                >
+                  Em processo
+                </button>
+                <button
+                  type="button"
+                  class="vetorizar-filtro-btn"
+                  [class.vetorizar-filtro-btn--active]="isFiltroSituacao('finalizados')"
+                  (click)="selectFiltroSituacao('finalizados')"
+                  role="tab"
+                  [attr.aria-selected]="isFiltroSituacao('finalizados') ? 'true' : 'false'"
+                >
+                  Finalizados
+                </button>
+              </div>
+
+              <div
+                class="vetorizar-filtros__panel"
+                role="tabpanel"
+                [attr.aria-label]="ariaLabelPainelFiltro()"
+              >
+                @switch (filtroSituacao()) {
+                  @case ('pendentes') {
+                    <p class="vetorizar-filtros__placeholder">Área de imagens — pendentes (estado ao escolher o evento).</p>
+                  }
+                  @case ('em-processo') {
+                    <p class="vetorizar-filtros__placeholder">Área de imagens — em processo.</p>
+                  }
+                  @case ('finalizados') {
+                    <p class="vetorizar-filtros__placeholder">Área de imagens — finalizados.</p>
+                  }
+                }
+              </div>
+            </section>
+          } @else {
+            <p class="vetorizar-filtros__hint" role="status">
+              Selecione um evento para filtrar por pendentes, em processo ou finalizados.
+            </p>
+          }
+        </section>
+
+        <div class="vetorizar-main nana-app-page-body--centered-fill">
+          @if (!eventoId()) {
+            <app-explore-container name="Vetorizar" />
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
