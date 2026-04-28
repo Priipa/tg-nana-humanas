@@ -1,7 +1,7 @@
 import { Component, inject, Input } from '@angular/core';
 import { IonContent, IonIcon, IonItem, IonLabel, IonList, PopoverController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { closeCircleOutline } from 'ionicons/icons';
+import { closeCircleOutline, downloadOutline } from 'ionicons/icons';
 
 /** Mesma forma que EmProcessoVetorItem (evita import circular com vetorizar.ts). */
 export type ItemMenuEmProcesso = {
@@ -75,6 +75,10 @@ export type ItemMenuEmProcesso = {
   template: `
     <ion-content class="vetor-ep-menu-popover" [scrollY]="false">
       <ion-list lines="none">
+        <ion-item button detail="false" (click)="downloadFoto()" class="vetor-ep-menu-popover__item">
+          <ion-icon slot="start" name="download-outline" class="vetor-ep-menu-popover__ico" aria-hidden="true" />
+          <ion-label>Download da foto</ion-label>
+        </ion-item>
         <ion-item button detail="false" (click)="confirmar()" class="vetor-ep-menu-popover__item">
           <ion-icon
             slot="start"
@@ -95,7 +99,11 @@ export class VetorizarEmProcessoMenuComponent {
   private readonly popoverCtrl = inject(PopoverController);
 
   constructor() {
-    addIcons({ closeCircleOutline });
+    addIcons({ closeCircleOutline, downloadOutline });
+  }
+
+  downloadFoto(): void {
+    void this.popoverCtrl.dismiss(this.item, 'baixar-foto');
   }
 
   confirmar(): void {

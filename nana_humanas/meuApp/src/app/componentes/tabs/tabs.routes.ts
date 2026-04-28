@@ -20,9 +20,9 @@ export const routes: Routes = [
           import('../../pages/vetorizar/vetorizar').then((m) => m.VetorizarPage),
       },
       {
-        path: 'tab3',
+        path: 'aquarelar',
         loadComponent: () =>
-          import('../../tab3/tab3.page').then((m) => m.Tab3Page),
+          import('../../pages/aquarelar/aquarelar.page').then((m) => m.AquarelarPage),
       },
       {
         path: '',

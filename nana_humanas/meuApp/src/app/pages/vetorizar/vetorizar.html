@@ -40,7 +40,13 @@
               </span>
               <div class="vetorizar-stat-card__text">
                 <span class="vetorizar-stat-card__label">Total de Registro</span>
-                <span class="vetorizar-stat-card__value">{{ totalRegistros() }}</span>
+                <span class="vetorizar-stat-card__value">
+                  @if (totalRegistrosValor() !== null) {
+                    {{ totalRegistrosValor() }}
+                  } @else {
+                    —
+                  }
+                </span>
               </div>
             </article>
             <article class="vetorizar-stat-card">
@@ -55,7 +61,13 @@
               </span>
               <div class="vetorizar-stat-card__text">
                 <span class="vetorizar-stat-card__label">Total de Vetorizado</span>
-                <span class="vetorizar-stat-card__value">{{ totalVetorizado() }}</span>
+                <span class="vetorizar-stat-card__value">
+                  @if (percentualVetorizadoCard() !== null) {
+                    {{ percentualVetorizadoCard() }}
+                  } @else {
+                    —
+                  }
+                </span>
               </div>
             </article>
           </div>

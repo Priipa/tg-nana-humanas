@@ -1,0 +1,82 @@
+<ion-content [fullscreen]="true" [scrollY]="true" class="nana-app-page-content">
+  <div class="nana-app-page-scroll">
+    <div class="nana-app-page">
+      <app-custom-header [userName]="userName()" />
+
+      <div class="nana-app-page-body vetorizar-body">
+        <section class="vetorizar-evento" aria-label="Aquarelar: evento e totais">
+          <div class="vetorizar-form-card">
+            <div class="select-shell">
+              <ion-select
+                mode="md"
+                [value]="eventoId()"
+                (ionChange)="onEventoChange($event)"
+                [interfaceOptions]="eventoSelectInterfaceOptions()"
+                [interface]="eventoSelectInterface()"
+                cancelText="Cancelar"
+                okText="Selecionar"
+                placeholder="Selecione o evento"
+                labelPlacement="start"
+                justify="space-between"
+                class="evento-select"
+              >
+                @for (e of eventos; track e.id) {
+                  <ion-select-option [value]="e.id">{{ e.titulo }}</ion-select-option>
+                }
+              </ion-select>
+            </div>
+          </div>
+
+          <div class="vetorizar-stats" role="group" aria-label="Totais do evento para aquarelar">
+            <article class="vetorizar-stat-card">
+              <span class="vetorizar-stat-card__icon-wrap" aria-hidden="true">
+                <img
+                  class="vetorizar-stat-card__icon"
+                  src="assets/vetorizar/total.png"
+                  width="48"
+                  height="48"
+                  alt=""
+                />
+              </span>
+              <div class="vetorizar-stat-card__text">
+                <span class="vetorizar-stat-card__label">Total de Vetorizado</span>
+                <span class="vetorizar-stat-card__value">
+                  @if (totalVetorizadoBruto() !== null) {
+                    {{ totalVetorizadoBruto() }}
+                  } @else {
+                    —
+                  }
+                </span>
+              </div>
+            </article>
+            <article class="vetorizar-stat-card">
+              <span class="vetorizar-stat-card__icon-wrap" aria-hidden="true">
+                <img
+                  class="vetorizar-stat-card__icon vetorizar-stat-card__icon--finalizado"
+                  src="assets/vetorizar/finalizado.png"
+                  width="48"
+                  height="48"
+                  alt=""
+                />
+              </span>
+              <div class="vetorizar-stat-card__text">
+                <span class="vetorizar-stat-card__label">Total de Aquarelas</span>
+                <span class="vetorizar-stat-card__value">
+                  @if (percentualAquarelado() !== null) {
+                    {{ percentualAquarelado() }}
+                  } @else {
+                    —
+                  }
+                </span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <div class="aquarelar-explore-wrap">
+          <app-explore-container name="Aquarelar" />
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

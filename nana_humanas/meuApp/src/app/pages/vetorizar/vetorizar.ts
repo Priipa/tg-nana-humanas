@@ -116,8 +116,31 @@ export class VetorizarPage implements OnDestroy {
   visualizadorFotoSrc = signal('');
   visualizadorFotoAlt = signal('');
 
-  totalRegistros = signal(100);
-  totalVetorizado = signal('80%');
+  /** Totais mock por evento (API depois). Sem evento selecionado os cartões mostram «—». */
+  private readonly totaisPorEventoVetorizar: Record<string, { registros: number; vetorizadoPct: number }> = {
+    '1': { registros: 100, vetorizadoPct: 80 },
+    '2': { registros: 50, vetorizadoPct: 40 },
+  };
+
+  totalRegistrosValor = computed(() => {
+    const id = this.eventoId();
+    if (id === undefined) {
+      return null as number | null;
+    }
+    return this.totaisPorEventoVetorizar[id]?.registros ?? 0;
+  });
+
+  percentualVetorizadoCard = computed(() => {
+    const id = this.eventoId();
+    if (id === undefined) {
+      return null as string | null;
+    }
+    const t = this.totaisPorEventoVetorizar[id];
+    if (!t) {
+      return '0%';
+    }
+    return `${t.vetorizadoPct}%`;
+  });
 
   /**
    * Em tablets (≥768px) usa `alert` (centrado); em telemóveis mantém `action-sheet` (base).
@@ -315,6 +338,17 @@ export class VetorizarPage implements OnDestroy {
     });
     await popover.present();
     const { data, role } = await popover.onDidDismiss<EmProcessoVetorItem>();
+    if (role === 'baixar-foto' && data) {
+      const p: PendenteVetorItem = {
+        id: data.id,
+        eventoId: data.eventoId,
+        nome: data.nome,
+        fotografo: data.fotografo,
+        thumbUrl: data.thumbUrl,
+      };
+      await this.baixarImagemPendente(p, new Event('click'));
+      return;
+    }
     if (role === 'confirm' && data) {
       this.voltarEmProcessoParaPendentes(data);
     }

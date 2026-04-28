@@ -1,0 +1,204 @@
+@use '../../componentes/custom-header/nana-app-page-layout' as *;
+
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.vetorizar-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.vetorizar-evento {
+  flex: 0 0 auto;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.aquarelar-explore-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mesmo bloco visual que Vetorizar (select branco + cartões teal) */
+.vetorizar-form-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: clamp(8px, 1.4vw, 12px) clamp(14px, 2.8vw, 28px) clamp(8px, 1.4vw, 12px)
+    clamp(14px, 2.8vw, 28px);
+  background: #ffffff;
+  background-color: #ffffff;
+  --ion-background-color: #ffffff;
+  --ion-item-background: #ffffff;
+  color-scheme: only light;
+  border-radius: clamp(14px, 2.2vw, 20px);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.1),
+    0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.select-shell {
+  --background: #ffffff;
+  --ion-background-color: #ffffff;
+  background-color: #ffffff;
+  --border-radius: 12px;
+  border-radius: 12px;
+  overflow: visible;
+  min-height: 56px;
+  display: block;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+  color-scheme: only light;
+}
+
+.evento-select {
+  --background: #ffffff;
+  --ion-background-color: #ffffff;
+  --color: #434a55;
+  color: #434a55;
+  --placeholder-color: #6b7179;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  width: 100%;
+  min-height: 56px;
+  --border-width: 0;
+  --highlight-color-focused: #c15261;
+  --highlight-height: 2px;
+  font-size: 1rem;
+  border-radius: 12px;
+  color-scheme: only light;
+}
+
+:host ::ng-deep .select-shell .evento-select::part(wrapper) {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .select-shell .evento-select::part(inner) {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+}
+
+:host ::ng-deep .select-shell .evento-select::part(container) {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+:host ::ng-deep .select-shell .evento-select::part(text) {
+  color: #434a55;
+}
+
+:host ::ng-deep .select-shell .evento-select::part(icon) {
+  flex-shrink: 0;
+  margin-inline-start: auto;
+  color: #c15261;
+}
+
+:host ::ng-deep .select-shell .evento-select,
+:host ::ng-deep .vetorizar-form-card ion-select.evento-select {
+  --background: #ffffff;
+  --ion-background-color: #ffffff;
+}
+
+.vetorizar-stats {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: clamp(10px, 2.5vw, 14px);
+  width: 100%;
+  margin-top: 12px;
+  box-sizing: border-box;
+}
+
+.vetorizar-stat-card {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px 12px;
+  box-sizing: border-box;
+  border-radius: clamp(14px, 2.2vw, 20px);
+  background: linear-gradient(180deg, #2a5764 0%, #244d5a 40%, #1f4552 100%);
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.18),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+  color: #ffffff;
+  font-family: var(--ion-font-family, "Roboto Serif", Georgia, serif);
+}
+
+.vetorizar-stat-card__icon-wrap {
+  --stat-icon-size: clamp(50px, 12.2vw, 60px);
+  position: relative;
+  width: var(--stat-icon-size);
+  height: var(--stat-icon-size);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.vetorizar-stat-card__icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  filter: brightness(0) invert(1);
+}
+
+.vetorizar-stat-card__icon--finalizado {
+  transform: scale(1.5);
+  transform-origin: center center;
+}
+
+.vetorizar-stat-card__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.vetorizar-stat-card__label {
+  font-size: clamp(0.84rem, 2.6vw, 0.95rem);
+  font-weight: 500;
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.95);
+  text-align: center;
+  max-width: 100%;
+}
+
+.vetorizar-stat-card__value {
+  font-size: clamp(1.3rem, 4.6vw, 1.78rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  text-align: center;
+  width: 100%;
+}
