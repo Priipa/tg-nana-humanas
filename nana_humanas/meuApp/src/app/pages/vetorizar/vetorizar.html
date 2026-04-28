@@ -1,7 +1,7 @@
 <ion-content [fullscreen]="true" [scrollY]="true" class="nana-app-page-content">
   <div class="nana-app-page-scroll">
     <div class="nana-app-page">
-      <app-custom-header />
+      <app-custom-header [userName]="userName()" />
 
       <div class="nana-app-page-body vetorizar-body">
         <section class="vetorizar-evento" aria-label="Vetorização: evento, totais e listas">
@@ -103,18 +103,178 @@
 
               <div
                 class="vetorizar-filtros__panel"
+                [ngClass]="{
+                  'vetorizar-filtros__panel--pendentes': filtroSituacao() === 'pendentes',
+                  'vetorizar-filtros__panel--em-processo': filtroSituacao() === 'em-processo'
+                }"
                 role="tabpanel"
                 [attr.aria-label]="ariaLabelPainelFiltro()"
               >
                 @switch (filtroSituacao()) {
                   @case ('pendentes') {
-                    <p class="vetorizar-filtros__placeholder">Área de imagens — pendentes (estado ao escolher o evento).</p>
+                    @if (pendentesDoEvento().length > 0) {
+                      <ul class="vetor-pendentes" role="list" aria-label="Fotos pendentes de vetorizar">
+                        @for (p of pendentesDoEvento(); track p.id) {
+                          <li class="vetor-pendentes__item">
+                            <article class="vetor-pendente-card">
+                              <div class="vetor-pendente-card__row">
+                                <div class="vetor-pendente-card__thumb-wrap">
+                                  <img
+                                    class="vetor-pendente-card__thumb"
+                                    [src]="p.thumbUrl"
+                                    [alt]="'Foto de ' + p.nome"
+                                    width="80"
+                                    height="80"
+                                    loading="lazy"
+                                    decoding="async"
+                                  />
+                                </div>
+                                <div class="vetor-pendente-card__body">
+                                  <h3 class="vetor-pendente-card__nome">{{ p.nome }}</h3>
+                                  <p class="vetor-pendente-card__meta">Registro: {{ p.fotografo }}</p>
+                                </div>
+                              </div>
+                              <div class="vetor-pendente-card__acoes" role="group" aria-label="Ações">
+                                <button
+                                  type="button"
+                                  class="vetor-pendente-card__btn vetor-pendente-card__btn--outline"
+                                  (click)="baixarImagemPendente(p, $event)"
+                                >
+                                  <ion-icon name="download-outline" />
+                                  <span>Baixar</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  class="vetor-pendente-card__btn vetor-pendente-card__btn--preenchido"
+                                  (click)="moverPendenteParaEmProcesso(p, $event)"
+                                >
+                                  <ion-icon name="play-outline" />
+                                  <span>Iniciar</span>
+                                </button>
+                              </div>
+                            </article>
+                          </li>
+                        }
+                      </ul>
+                    } @else {
+                      <p class="vetorizar-filtros__placeholder">Sem pendentes para este evento (mock).</p>
+                    }
                   }
                   @case ('em-processo') {
-                    <p class="vetorizar-filtros__placeholder">Área de imagens — em processo.</p>
+                    @if (emProcessoDoEvento().length > 0) {
+                      <ul class="vetor-ep" role="list" aria-label="Fotos em processo de vetorização">
+                        @for (item of emProcessoDoEvento(); track item.id) {
+                          <li class="vetor-ep__item">
+                            <article class="vetor-ep-card">
+                              <div class="vetor-ep-card__top">
+                                <div class="vetor-ep-card__row">
+                                  <div class="vetor-ep-card__thumb-wrap">
+                                    <img
+                                      class="vetor-ep-card__thumb"
+                                      [src]="item.thumbUrl"
+                                      [alt]="'Foto de ' + item.nome"
+                                      width="80"
+                                      height="80"
+                                      loading="lazy"
+                                    />
+                                  </div>
+                                  <div class="vetor-ep-card__body">
+                                    <h3 class="vetor-ep-card__nome">{{ item.nome }}</h3>
+                                    <p class="vetor-ep-card__meta">Registro: {{ item.fotografo }}</p>
+                                    <p class="vetor-ep-card__meta">Inicializado: {{ item.inicializadoPor }}</p>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    class="vetor-ep-card__mais"
+                                    [attr.aria-label]="'Mais opções para ' + item.nome"
+                                    (click)="abrirMenuEmProcesso($event, item)"
+                                  >
+                                    <ion-icon name="ellipsis-vertical-outline" />
+                                  </button>
+                                </div>
+                              </div>
+                              @if (item.vetorAnexado === null) {
+                                <div class="vetor-ep-card__upload-bloco">
+                                  <input
+                                    type="file"
+                                    [id]="'vetor-ep-in-' + item.id"
+                                    class="vetor-ep-card__file-input"
+                                    (change)="onVetorFicheiroEscolhido(item, $event)"
+                                    accept=".png,.svg,.pdf,image/png,image/svg+xml,image/jpeg,application/pdf"
+                                  />
+                                  <label
+                                    [attr.for]="'vetor-ep-in-' + item.id"
+                                    class="vetor-ep-card__drop"
+                                  >
+                                    <ion-icon name="cloud-upload-outline" class="vetor-ep-card__drop-ico" />
+                                    <span class="vetor-ep-card__drop-title">Upload da imagem vetorizada</span>
+                                    <span class="vetor-ep-card__drop-hint"
+                                      >PNG, SVG ou PDF até 10MB</span
+                                    >
+                                  </label>
+                                </div>
+                              } @else {
+                                @if (item.vetorAnexado; as v) {
+                                <div class="vetor-ep-card__anexo">
+                                  <div class="vetor-ep-card__anexo-row">
+                                    <div class="vetor-ep-card__anexo-prev">
+                                      @if (mostrarPreviaComoImagem(v.mime, v.nome)) {
+                                        <img [src]="v.previewObjectUrl" [alt]="'Pré-visualização: ' + v.nome" />
+                                      } @else {
+                                        <ion-icon name="document-text-outline" class="vetor-ep-card__anexo-ico" />
+                                      }
+                                    </div>
+                                    <div class="vetor-ep-card__anexo-info">
+                                      <p class="vetor-ep-card__anexo-ok" aria-label="Ficheiro anexado com sucesso">
+                                        <ion-icon
+                                          class="vetor-ep-card__anexo-ok-ico"
+                                          name="checkmark-circle-outline"
+                                        />
+                                        <span>Arquivo anexado</span>
+                                      </p>
+                                      <p class="vetor-ep-card__anexo-nome">{{ v.nome }}</p>
+                                      <p class="vetor-ep-card__anexo-tam">{{ v.tamanhoLabel }}</p>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      class="vetor-ep-card__lixo"
+                                      (click)="removerVetorAnexado(item)"
+                                      aria-label="Remover ficheiro anexado"
+                                    >
+                                      <ion-icon name="trash-outline" />
+                                    </button>
+                                  </div>
+                                </div>
+                                <div class="vetor-ep-card__acoes-fim" role="group" aria-label="Ações de conclusão">
+                                  <button
+                                    type="button"
+                                    class="vetor-ep-card__btn vetor-ep-card__btn--destaque vetor-ep-card__btn--largura-total"
+                                    (click)="finalizarVetor(item, $event)"
+                                  >
+                                    <ion-icon name="checkmark-done-outline" />
+                                    <span>Finalizar</span>
+                                  </button>
+                                </div>
+                                }
+                              }
+                            </article>
+                          </li>
+                        }
+                      </ul>
+                    } @else {
+                      <p class="vetorizar-filtros__placeholder">Nenhum registo em processo para este evento.</p>
+                    }
                   }
                   @case ('finalizados') {
-                    <p class="vetorizar-filtros__placeholder">Área de imagens — finalizados.</p>
+                    @if (finalizadosDoEvento().length > 0) {
+                      <ul class="vetor-fin" role="list">
+                        @for (f of finalizadosDoEvento(); track f.id) {
+                          <li class="vetor-fin__item">✓ {{ f.nome }}</li>
+                        }
+                      </ul>
+                    } @else {
+                      <p class="vetorizar-filtros__placeholder">Ainda sem finalizados para este evento.</p>
+                    }
                   }
                 }
               </div>
@@ -125,12 +285,6 @@
             </p>
           }
         </section>
-
-        <div class="vetorizar-main nana-app-page-body--centered-fill">
-          @if (!eventoId()) {
-            <app-explore-container name="Vetorizar" />
-          }
-        </div>
       </div>
     </div>
   </div>

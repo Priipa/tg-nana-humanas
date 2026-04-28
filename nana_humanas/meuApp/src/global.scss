@@ -80,3 +80,22 @@ ion-action-sheet.fotografar-foto-action-sheet {
   --button-background-selected: #fff5f6;
   --button-background-selected-opacity: 1;
 }
+
+/* Popover Vetorizar — largura ao conteúdo (texto + ícone + padding); não passa do ecrã */
+ion-popover.vetor-ep-popover-shell {
+  --background: #ffffff;
+  --width: max-content;
+  --max-width: calc(100vw - 32px);
+  color-scheme: only light;
+}
+
+ion-popover.vetor-ep-popover-shell::part(content) {
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  border-radius: 12px;
+  box-shadow:
+    0 10px 36px rgba(31, 69, 82, 0.22),
+    0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(193, 82, 97, 0.22);
+  overflow: hidden;
+}
