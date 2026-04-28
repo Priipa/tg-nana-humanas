@@ -1,0 +1,31 @@
+<ion-modal
+  [isOpen]="aberto()"
+  cssClass="nana-visualizador-foto-modal"
+  [backdropDismiss]="true"
+  (didDismiss)="onDismiss()"
+>
+  <ng-template>
+    <div class="nana-visualizador-foto__shell">
+      <!-- Fora do ion-content: não desloca com o scroll da imagem -->
+      <button
+        type="button"
+        class="nana-visualizador-foto__close"
+        (click)="fecharPorBotao()"
+        aria-label="Fechar visualização"
+      >
+        <ion-icon name="close" size="large" aria-hidden="true" />
+      </button>
+      <ion-content class="nana-visualizador-foto__content" [scrollY]="true">
+        <div class="nana-visualizador-foto__flex-root">
+          <div class="nana-visualizador-foto__stage">
+            @if (src()) {
+              <div class="nana-visualizador-foto__frame">
+                <img [src]="src()" [alt]="alt()" class="nana-visualizador-foto__img" />
+              </div>
+            }
+          </div>
+        </div>
+      </ion-content>
+    </div>
+  </ng-template>
+</ion-modal>

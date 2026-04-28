@@ -8,6 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { CustomHeaderComponent } from '../../componentes/custom-header/custom-header.component';
+import { VisualizadorFotoComponent } from '../../componentes/visualizador-foto/visualizador-foto.component';
 import {
   IonContent,
   IonIcon,
@@ -18,6 +19,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
+  arrowForwardOutline,
   checkmarkCircleOutline,
   checkmarkDoneOutline,
   cloudUploadOutline,
@@ -29,6 +31,7 @@ import {
 } from 'ionicons/icons';
 import type { EventoOption } from '../fotografar/fotografar.page';
 import { VetorizarEmProcessoMenuComponent } from './vetorizar-em-processo-menu.component';
+import { VetorizarFinalizadoMenuComponent } from './vetorizar-finalizado-menu.component';
 
 export type SituacaoVetorFiltro = 'pendentes' | 'em-processo' | 'finalizados';
 
@@ -65,6 +68,15 @@ export type FinalizadoVetorItem = {
   id: string;
   eventoId: string;
   nome: string;
+  /** Quem registou a foto (substitui “evento” no card). */
+  fotografo: string;
+  /** Operador que concluiu a vetorização (Finalizar). */
+  vetorizadoPor: string;
+  thumbOriginalUrl: string;
+  /** URL do ficheiro vetorizado (p.ex. blob:); libertar em ngOnDestroy / remover. */
+  thumbVetorUrl: string;
+  vetorMime: string;
+  vetorNomeArquivo: string;
 };
 
 const MAX_TAMANHO_VETOR_BYTES = 10 * 1024 * 1024;
@@ -73,7 +85,15 @@ const MAX_TAMANHO_VETOR_BYTES = 10 * 1024 * 1024;
   selector: 'app-vetorizar',
   templateUrl: 'vetorizar.html',
   styleUrls: ['vetorizar.scss'],
-  imports: [NgClass, IonContent, IonIcon, IonSelect, IonSelectOption, CustomHeaderComponent],
+  imports: [
+    NgClass,
+    IonContent,
+    IonIcon,
+    IonSelect,
+    IonSelectOption,
+    CustomHeaderComponent,
+    VisualizadorFotoComponent,
+  ],
 })
 export class VetorizarPage implements OnDestroy {
   private readonly document = inject(DOCUMENT);
@@ -92,8 +112,39 @@ export class VetorizarPage implements OnDestroy {
   /** Nome exibido no header e em "Inicializado" (mock; alinhar com sessão quando existir). */
   userName = signal('Usuário');
 
+  visualizadorFotoAberto = signal(false);
+  visualizadorFotoSrc = signal('');
+  visualizadorFotoAlt = signal('');
+
   totalRegistros = signal(100);
   totalVetorizado = signal('80%');
+
+  /**
+   * Em tablets (≥768px) usa `alert` (centrado); em telemóveis mantém `action-sheet` (base).
+   */
+  eventoSelectInterface = signal<'action-sheet' | 'alert'>('action-sheet');
+  eventoSelectInterfaceOptions = computed(() => {
+    if (this.eventoSelectInterface() === 'alert') {
+      return {
+        header: 'Selecione o evento' as const,
+        cssClass: 'nana-evento-alert',
+        /** Cantos arredondados (~13px) e tipografia iOS; cores em `global.scss`. */
+        mode: 'ios' as const,
+      };
+    }
+    return {
+      header: 'Selecione o evento' as const,
+      cssClass: 'nana-evento-action-sheet',
+    };
+  });
+
+  private eventoTabletMq?: MediaQueryList;
+  private readonly syncEventoSelectInterface = (): void => {
+    if (!this.eventoTabletMq) {
+      return;
+    }
+    this.eventoSelectInterface.set(this.eventoTabletMq.matches ? 'alert' : 'action-sheet');
+  };
 
   pendentes = signal<PendenteVetorItem[]>([
     {
@@ -148,6 +199,7 @@ export class VetorizarPage implements OnDestroy {
 
   constructor() {
     addIcons({
+      arrowForwardOutline,
       downloadOutline,
       playOutline,
       ellipsisVerticalOutline,
@@ -157,14 +209,43 @@ export class VetorizarPage implements OnDestroy {
       trashOutline,
       documentTextOutline,
     });
+
+    if (isPlatformBrowser(this.platformId)) {
+      this.eventoTabletMq = window.matchMedia('(min-width: 768px)');
+      this.syncEventoSelectInterface();
+      this.eventoTabletMq.addEventListener('change', this.syncEventoSelectInterface);
+    }
   }
 
   ngOnDestroy(): void {
+    this.eventoTabletMq?.removeEventListener('change', this.syncEventoSelectInterface);
+
     for (const it of this.emProcesso()) {
       if (it.vetorAnexado) {
         URL.revokeObjectURL(it.vetorAnexado.previewObjectUrl);
       }
     }
+    for (const fin of this.finalizados()) {
+      if (fin.thumbVetorUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(fin.thumbVetorUrl);
+      }
+    }
+  }
+
+  abrirVisualizadorFoto(url: string, alt: string): void {
+    const u = url.trim();
+    if (!u) {
+      return;
+    }
+    this.visualizadorFotoSrc.set(u);
+    this.visualizadorFotoAlt.set(alt);
+    this.visualizadorFotoAberto.set(true);
+  }
+
+  fecharVisualizadorFoto(): void {
+    this.visualizadorFotoAberto.set(false);
+    this.visualizadorFotoSrc.set('');
+    this.visualizadorFotoAlt.set('');
   }
 
   onEventoChange(event: CustomEvent): void {
@@ -352,14 +433,94 @@ export class VetorizarPage implements OnDestroy {
     if (!item.vetorAnexado) {
       return;
     }
-    URL.revokeObjectURL(item.vetorAnexado.previewObjectUrl);
+    const v = item.vetorAnexado;
+    const fin: FinalizadoVetorItem = {
+      id: `fin-${item.id}-${Date.now()}`,
+      eventoId: item.eventoId,
+      nome: item.nome,
+      fotografo: item.fotografo,
+      vetorizadoPor: this.userName().trim() || '—',
+      thumbOriginalUrl: item.thumbUrl,
+      thumbVetorUrl: v.previewObjectUrl,
+      vetorMime: v.mime,
+      vetorNomeArquivo: v.nome,
+    };
     this.emProcesso.update((l) => l.filter((x) => x.id !== item.id));
-    this.finalizados.update((f) => [
-      ...f,
-      { id: `fin-${item.id}-${Date.now()}`, eventoId: item.eventoId, nome: item.nome },
-    ]);
+    this.finalizados.update((f) => [...f, fin]);
     this.filtroSituacao.set('finalizados');
     void this.mostrarToast('Vetorização finalizada.', true);
+  }
+
+  async abrirMenuFinalizado(ev: Event, f: FinalizadoVetorItem): Promise<void> {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const popover = await this.popoverController.create({
+      component: VetorizarFinalizadoMenuComponent,
+      componentProps: { item: f },
+      cssClass: 'vetor-ep-popover-shell',
+      event: ev,
+      alignment: 'end',
+      side: 'bottom',
+      showBackdrop: true,
+      translucent: false,
+    });
+    await popover.present();
+    const { data, role } = await popover.onDidDismiss<FinalizadoVetorItem>();
+    if (!data) {
+      return;
+    }
+    if (role === 'baixar') {
+      await this.baixarVetorFinalizado(data);
+      return;
+    }
+    if (role === 'baixar-original') {
+      await this.baixarOriginalFinalizado(data);
+      return;
+    }
+    if (role === 'em-processo') {
+      this.finalizadoParaEmProcesso(data);
+    }
+  }
+
+  /** Devolve o registo à fila “Em processo” (sem anexo; novo ciclo de upload). */
+  finalizadoParaEmProcesso(f: FinalizadoVetorItem): void {
+    if (f.thumbVetorUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(f.thumbVetorUrl);
+    }
+    this.finalizados.update((lista) => lista.filter((x) => x.id !== f.id));
+    const item: EmProcessoVetorItem = {
+      id: `ep-desfin-${f.id}-${Date.now()}`,
+      eventoId: f.eventoId,
+      nome: f.nome,
+      fotografo: f.fotografo,
+      thumbUrl: f.thumbOriginalUrl,
+      inicializadoPor: this.userName().trim() || '—',
+      vetorAnexado: null,
+    };
+    this.emProcesso.update((l) => [...l, item]);
+    this.filtroSituacao.set('em-processo');
+    void this.mostrarToast('Marcado em processo.', true);
+  }
+
+  private async baixarOriginalFinalizado(f: FinalizadoVetorItem): Promise<void> {
+    const p: PendenteVetorItem = {
+      id: f.id,
+      eventoId: f.eventoId,
+      nome: f.nome,
+      fotografo: f.fotografo,
+      thumbUrl: f.thumbOriginalUrl,
+    };
+    await this.baixarImagemPendente(p, new Event('click'));
+  }
+
+  private async baixarVetorFinalizado(f: FinalizadoVetorItem): Promise<void> {
+    if (!isPlatformBrowser(this.platformId) || !f.thumbVetorUrl) {
+      return;
+    }
+    const nome =
+      f.vetorNomeArquivo.trim() ||
+      `vetor-${this.sanitizarBaseNome(f.nome)}`;
+    this.dispararDownloadComHref(f.thumbVetorUrl, nome, this.document);
   }
 
   private async mostrarToast(mensagem: string, sucesso: boolean = false): Promise<void> {

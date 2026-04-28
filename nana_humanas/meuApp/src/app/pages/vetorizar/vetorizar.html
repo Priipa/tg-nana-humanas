@@ -11,9 +11,10 @@
                 mode="md"
                 [value]="eventoId()"
                 (ionChange)="onEventoChange($event)"
-                [interfaceOptions]="{ header: 'Selecione o evento' }"
-                interface="action-sheet"
+                [interfaceOptions]="eventoSelectInterfaceOptions()"
+                [interface]="eventoSelectInterface()"
                 cancelText="Cancelar"
+                okText="Selecionar"
                 placeholder="Selecione o evento"
                 labelPlacement="start"
                 justify="space-between"
@@ -105,7 +106,8 @@
                 class="vetorizar-filtros__panel"
                 [ngClass]="{
                   'vetorizar-filtros__panel--pendentes': filtroSituacao() === 'pendentes',
-                  'vetorizar-filtros__panel--em-processo': filtroSituacao() === 'em-processo'
+                  'vetorizar-filtros__panel--em-processo': filtroSituacao() === 'em-processo',
+                  'vetorizar-filtros__panel--finalizados': filtroSituacao() === 'finalizados'
                 }"
                 role="tabpanel"
                 [attr.aria-label]="ariaLabelPainelFiltro()"
@@ -119,15 +121,22 @@
                             <article class="vetor-pendente-card">
                               <div class="vetor-pendente-card__row">
                                 <div class="vetor-pendente-card__thumb-wrap">
-                                  <img
-                                    class="vetor-pendente-card__thumb"
-                                    [src]="p.thumbUrl"
-                                    [alt]="'Foto de ' + p.nome"
-                                    width="80"
-                                    height="80"
-                                    loading="lazy"
-                                    decoding="async"
-                                  />
+                                  <button
+                                    type="button"
+                                    class="vetor-thumb-hit"
+                                    (click)="abrirVisualizadorFoto(p.thumbUrl, 'Foto de ' + p.nome)"
+                                    aria-label="Ver foto em ecrã inteiro"
+                                  >
+                                    <img
+                                      class="vetor-pendente-card__thumb"
+                                      [src]="p.thumbUrl"
+                                      [alt]="'Foto de ' + p.nome"
+                                      width="92"
+                                      height="100"
+                                      loading="lazy"
+                                      decoding="async"
+                                    />
+                                  </button>
                                 </div>
                                 <div class="vetor-pendente-card__body">
                                   <h3 class="vetor-pendente-card__nome">{{ p.nome }}</h3>
@@ -169,14 +178,21 @@
                               <div class="vetor-ep-card__top">
                                 <div class="vetor-ep-card__row">
                                   <div class="vetor-ep-card__thumb-wrap">
-                                    <img
-                                      class="vetor-ep-card__thumb"
-                                      [src]="item.thumbUrl"
-                                      [alt]="'Foto de ' + item.nome"
-                                      width="80"
-                                      height="80"
-                                      loading="lazy"
-                                    />
+                                    <button
+                                      type="button"
+                                      class="vetor-thumb-hit"
+                                      (click)="abrirVisualizadorFoto(item.thumbUrl, 'Foto de ' + item.nome)"
+                                      aria-label="Ver foto em ecrã inteiro"
+                                    >
+                                      <img
+                                        class="vetor-ep-card__thumb"
+                                        [src]="item.thumbUrl"
+                                        [alt]="'Foto de ' + item.nome"
+                                        width="80"
+                                        height="80"
+                                        loading="lazy"
+                                      />
+                                    </button>
                                   </div>
                                   <div class="vetor-ep-card__body">
                                     <h3 class="vetor-ep-card__nome">{{ item.nome }}</h3>
@@ -267,9 +283,80 @@
                   }
                   @case ('finalizados') {
                     @if (finalizadosDoEvento().length > 0) {
-                      <ul class="vetor-fin" role="list">
+                      <ul class="vetor-fin" role="list" aria-label="Registos vetorizados">
                         @for (f of finalizadosDoEvento(); track f.id) {
-                          <li class="vetor-fin__item">✓ {{ f.nome }}</li>
+                          <li class="vetor-fin__item">
+                            <article class="vetor-fin-card">
+                              <div class="vetor-fin-card__head">
+                                <div class="vetor-fin-card__compare" aria-hidden="false">
+                                  <div class="vetor-fin-card__pair">
+                                    <span class="vetor-fin-card__pair-lbl">Original</span>
+                                    <div class="vetor-fin-card__frame">
+                                      <button
+                                        type="button"
+                                        class="vetor-thumb-hit vetor-thumb-hit--fill"
+                                        (click)="abrirVisualizadorFoto(f.thumbOriginalUrl, 'Original: ' + f.nome)"
+                                        aria-label="Ver foto original em ecrã inteiro"
+                                      >
+                                        <img
+                                          class="vetor-fin-card__img"
+                                          [src]="f.thumbOriginalUrl"
+                                          [alt]="'Original: ' + f.nome"
+                                          loading="lazy"
+                                        />
+                                      </button>
+                                    </div>
+                                  </div>
+                                  <ion-icon
+                                    class="vetor-fin-card__arrow"
+                                    name="arrow-forward-outline"
+                                    aria-hidden="true"
+                                  />
+                                  <div class="vetor-fin-card__pair">
+                                    <span class="vetor-fin-card__pair-lbl">Vetorizada</span>
+                                    <div class="vetor-fin-card__frame">
+                                      @if (mostrarPreviaComoImagem(f.vetorMime, f.vetorNomeArquivo)) {
+                                        <button
+                                          type="button"
+                                          class="vetor-thumb-hit vetor-thumb-hit--fill"
+                                          (click)="abrirVisualizadorFoto(f.thumbVetorUrl, 'Vetorizada: ' + f.nome)"
+                                          aria-label="Ver vetorização em ecrã inteiro"
+                                        >
+                                          <img
+                                            class="vetor-fin-card__img"
+                                            [src]="f.thumbVetorUrl"
+                                            [alt]="'Vetorizada: ' + f.nome"
+                                            loading="lazy"
+                                          />
+                                        </button>
+                                      } @else {
+                                        <div class="vetor-fin-card__doc">
+                                          <ion-icon name="document-text-outline" />
+                                        </div>
+                                      }
+                                    </div>
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  class="vetor-fin-card__mais"
+                                  [attr.aria-label]="'Mais opções para ' + f.nome"
+                                  (click)="abrirMenuFinalizado($event, f)"
+                                >
+                                  <ion-icon name="ellipsis-vertical-outline" />
+                                </button>
+                              </div>
+                              <h3 class="vetor-fin-card__nome">{{ f.nome }}</h3>
+                              <p class="vetor-fin-card__meta">
+                                <span class="vetor-fin-card__meta-k">Fotógrafo:</span>
+                                {{ f.fotografo }}
+                              </p>
+                              <p class="vetor-fin-card__meta">
+                                <span class="vetor-fin-card__meta-k">Vetorizado por:</span>
+                                {{ f.vetorizadoPor }}
+                              </p>
+                            </article>
+                          </li>
                         }
                       </ul>
                     } @else {
@@ -288,4 +375,11 @@
       </div>
     </div>
   </div>
+
+  <app-visualizador-foto
+    [aberto]="visualizadorFotoAberto()"
+    [src]="visualizadorFotoSrc()"
+    [alt]="visualizadorFotoAlt()"
+    (fechar)="fecharVisualizadorFoto()"
+  />
 </ion-content>

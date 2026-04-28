@@ -244,7 +244,58 @@
 }
 
 .media-zone--preview {
+  position: relative;
   padding: 10px;
+}
+
+.media-preview-ver-foto {
+  display: flex;
+  flex: 1;
+  align-self: stretch;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.media-trocar-foto {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.media-trocar-foto:hover {
+  background: #1d4ed8;
+}
+
+.media-trocar-foto:active {
+  transform: scale(0.95);
+}
+
+:host ::ng-deep .media-trocar-foto ion-icon {
+  width: 22px;
+  height: 22px;
+  color: #ffffff;
 }
 
 .media-placeholder {

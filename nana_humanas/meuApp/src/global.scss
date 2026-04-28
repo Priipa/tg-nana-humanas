@@ -81,6 +81,64 @@ ion-action-sheet.fotografar-foto-action-sheet {
   --button-background-selected-opacity: 1;
 }
 
+/**
+ * Seletor de evento (ion-select → action-sheet): mesma paleta dos menus/popovers Vetorizar
+ * (#fff, texto #2c3138, acento #c15261). Evita fundo escuro com dark.system.css no SO.
+ */
+ion-action-sheet.nana-evento-action-sheet {
+  color-scheme: only light;
+  --background: #ffffff;
+  --color: #2c3138;
+  --button-color: #c15261;
+  --button-color-activated: #9d3c4a;
+  --button-color-selected: #9d3c4a;
+  --button-background-selected: #fff5f6;
+  --button-background-selected-opacity: 1;
+  --width: min(100%, calc(100vw - 24px));
+  --max-width: min(520px, calc(100vw - 24px));
+  --backdrop-opacity: 0.4;
+}
+
+/**
+ * Seletor de evento em tablet: ion-select → `alert` (centrado).
+ * interfaceOptions usam `mode: 'ios'` para cantos ~13px; cores alinhadas ao popover / cards.
+ */
+ion-alert.nana-evento-alert {
+  color-scheme: only light;
+
+  --background: #ffffff;
+  --ion-background-color: #ffffff;
+  --ion-background-color-rgb: 255, 255, 255;
+
+  --ion-text-color: #2c3138;
+  --ion-text-color-rgb: 44, 49, 56;
+
+  --ion-color-primary: #c15261;
+  --ion-color-primary-rgb: 193, 82, 97;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+
+  --ion-item-background: #ffffff;
+  --ion-item-border-color: rgba(193, 82, 97, 0.28);
+  --ion-border-color: rgba(44, 49, 56, 0.12);
+
+  --backdrop-opacity: 0.42;
+
+  /* Por defeito o iOS alert limita ~324px — alarga para leitura em tablet */
+  --min-width: min(100%, 300px);
+  --width: min(92vw, 440px);
+  --max-width: min(520px, calc(100vw - 48px));
+
+  font-size: 1rem;
+}
+
+@media screen and (min-width: 768px) {
+  ion-alert.nana-evento-alert {
+    --width: min(86vw, 480px);
+    --max-width: min(540px, calc(100vw - 64px));
+  }
+}
+
 /* Popover Vetorizar — largura ao conteúdo (texto + ícone + padding); não passa do ecrã */
 ion-popover.vetor-ep-popover-shell {
   --background: #ffffff;
@@ -98,4 +156,54 @@ ion-popover.vetor-ep-popover-shell::part(content) {
     0 2px 10px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(193, 82, 97, 0.22);
   overflow: hidden;
+}
+
+/*
+ * Modal de visualização de foto — altura explícita obrigatória: `height: auto` no ion-modal
+ * faz o cartão colapsar / não mostrar conteúdo em várias versões do Ionic.
+ */
+ion-modal.nana-visualizador-foto-modal {
+  --width: min(calc(100vw - 12px), 560px);
+  --max-width: calc(100vw - 12px);
+  /* fallback vh, depois dvh (barra do browser) */
+  --height: min(88vh, 680px);
+  --height: min(88dvh, calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16px));
+  --max-height: min(92vh, calc(100vh - 24px));
+  --max-height: min(92dvh, calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 12px));
+  --border-radius: 16px;
+  --box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.45),
+    0 8px 16px rgba(0, 0, 0, 0.2);
+  --backdrop-opacity: 0.55;
+}
+
+@media screen and (min-width: 768px) {
+  ion-modal.nana-visualizador-foto-modal {
+    --width: min(calc(100vw - 40px), 720px);
+    --max-width: min(calc(100vw - 40px), 720px);
+    --height: min(84vh, 720px);
+    --height: min(84dvh, calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 24px));
+  }
+}
+
+ion-modal.nana-visualizador-foto-modal .nana-visualizador-foto__content {
+  --background: #121212;
+}
+
+/*
+ * Área scroll do ion-content em coluna flex para o conteúdo preencher e centrar
+ * em qualquer altura/largura do modal (telefone ↔ tablet).
+ */
+ion-modal.nana-visualizador-foto-modal ion-content.nana-visualizador-foto__content::part(scroll) {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+ion-modal.nana-visualizador-foto-modal ion-content.nana-visualizador-foto__content::part(scroll)::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }

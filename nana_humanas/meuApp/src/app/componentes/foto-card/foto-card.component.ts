@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { imageOutline, cameraOutline } from 'ionicons/icons';
 import { IonIcon } from '@ionic/angular/standalone';
@@ -20,6 +20,8 @@ export class FotoCardComponent {
   fotografo = input<string>('');
   /** URL da miniatura; vazio mostra o placeholder */
   thumbUrl = input<string>('');
+  /** Toque na miniatura para ver em ecrã inteiro */
+  visualizarFoto = output<{ url: string; alt: string }>();
 
   constructor() {
     addIcons({ imageOutline, cameraOutline });

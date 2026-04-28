@@ -19,6 +19,19 @@
   overflow: hidden;
 }
 
+.foto-card__thumb-hit {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: zoom-in;
+  border-radius: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .foto-card__img {
   width: 100%;
   height: 100%;

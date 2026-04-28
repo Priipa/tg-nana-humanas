@@ -16,9 +16,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActionSheetController, ToastController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { fromEvent } from 'rxjs';
-import { close, cameraOutline, searchOutline } from 'ionicons/icons';
+import { close, cameraOutline, imagesOutline, searchOutline } from 'ionicons/icons';
 import { CustomHeaderComponent } from '../../componentes/custom-header/custom-header.component';
 import { FotoCardComponent } from '../../componentes/foto-card/foto-card.component';
+import { VisualizadorFotoComponent } from '../../componentes/visualizador-foto/visualizador-foto.component';
 import {
   IonButton,
   IonContent,
@@ -54,7 +55,17 @@ const FOTOS_MOCK_PHOTO = [
   selector: 'app-fotografar',
   templateUrl: 'fotografar.page.html',
   styleUrls: ['fotografar.page.scss'],
-  imports: [IonContent, IonButton, IonIcon, IonInput, IonSelect, IonSelectOption, CustomHeaderComponent, FotoCardComponent],
+  imports: [
+    IonContent,
+    IonButton,
+    IonIcon,
+    IonInput,
+    IonSelect,
+    IonSelectOption,
+    CustomHeaderComponent,
+    FotoCardComponent,
+    VisualizadorFotoComponent,
+  ],
 })
 export class FotografarPage implements OnDestroy {
   private readonly actionSheetController = inject(ActionSheetController);
@@ -72,11 +83,42 @@ export class FotografarPage implements OnDestroy {
   ];
 
   eventoId = signal<string | undefined>(undefined);
+
+  /**
+   * Em tablets (≥768px) usa `alert` (centrado); em telemóveis mantém `action-sheet` (base).
+   */
+  eventoSelectInterface = signal<'action-sheet' | 'alert'>('action-sheet');
+  eventoSelectInterfaceOptions = computed(() => {
+    if (this.eventoSelectInterface() === 'alert') {
+      return {
+        header: 'Selecione o evento' as const,
+        cssClass: 'nana-evento-alert',
+        mode: 'ios' as const,
+      };
+    }
+    return {
+      header: 'Selecione o evento' as const,
+      cssClass: 'nana-evento-action-sheet',
+    };
+  });
+
+  private eventoTabletMq?: MediaQueryList;
+  private readonly syncEventoSelectInterface = (): void => {
+    if (!this.eventoTabletMq) {
+      return;
+    }
+    this.eventoSelectInterface.set(this.eventoTabletMq.matches ? 'alert' : 'action-sheet');
+  };
+
   guestName = signal('');
   searchQuery = signal('');
 
   previewUrl = signal<string | null>(null);
   private previewRevokable: string | null = null;
+
+  visualizadorFotoAberto = signal(false);
+  visualizadorFotoSrc = signal('');
+  visualizadorFotoAlt = signal('');
 
   private nextEnvioId = 3;
 
@@ -154,9 +196,13 @@ export class FotografarPage implements OnDestroy {
   );
 
   constructor() {
-    addIcons({ close, cameraOutline, searchOutline });
+    addIcons({ close, cameraOutline, imagesOutline, searchOutline });
 
     if (isPlatformBrowser(this.platformId)) {
+      this.eventoTabletMq = window.matchMedia('(min-width: 768px)');
+      this.syncEventoSelectInterface();
+      this.eventoTabletMq.addEventListener('change', this.syncEventoSelectInterface);
+
       this.updateHistoricoColunasParaLargura();
       fromEvent(window, 'resize', { passive: true })
         .pipe(takeUntilDestroyed())
@@ -318,6 +364,22 @@ export class FotografarPage implements OnDestroy {
     this.previewUrl.set(null);
   }
 
+  abrirVisualizadorFoto(url: string, alt: string): void {
+    const u = url.trim();
+    if (!u) {
+      return;
+    }
+    this.visualizadorFotoSrc.set(u);
+    this.visualizadorFotoAlt.set(alt);
+    this.visualizadorFotoAberto.set(true);
+  }
+
+  fecharVisualizadorFoto(): void {
+    this.visualizadorFotoAberto.set(false);
+    this.visualizadorFotoSrc.set('');
+    this.visualizadorFotoAlt.set('');
+  }
+
   abrirFotoPeloCard(): void {
     void this.abrirMenuFoto();
   }
@@ -383,6 +445,8 @@ export class FotografarPage implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.eventoTabletMq?.removeEventListener('change', this.syncEventoSelectInterface);
+
     for (const h of this.historico()) {
       this.revogarSeBlob(h.thumbUrl);
     }

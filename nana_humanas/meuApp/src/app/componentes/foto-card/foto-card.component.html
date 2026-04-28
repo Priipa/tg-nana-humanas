@@ -1,11 +1,14 @@
 <article class="foto-card" role="listitem">
   <div class="foto-card__thumb">
-    @if (thumbUrl()) {
-      <img
-        [src]="thumbUrl()"
-        [alt]="'Foto de ' + nome()"
-        class="foto-card__img"
-      />
+    @if (thumbUrl(); as url) {
+      <button
+        type="button"
+        class="foto-card__thumb-hit"
+        (click)="visualizarFoto.emit({ url, alt: 'Foto de ' + nome() })"
+        aria-label="Ver foto em ecrã inteiro"
+      >
+        <img [src]="url" [alt]="'Foto de ' + nome()" class="foto-card__img" />
+      </button>
     } @else {
       <div class="foto-card__placeholder" aria-hidden="true">
         <ion-icon name="image-outline" />

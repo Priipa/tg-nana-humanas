@@ -21,9 +21,10 @@
           mode="md"
           [value]="eventoId()"
           (ionChange)="onEventoChange($event)"
-          [interfaceOptions]="{ header: 'Selecione o evento' }"
-          interface="action-sheet"
+          [interfaceOptions]="eventoSelectInterfaceOptions()"
+          [interface]="eventoSelectInterface()"
           cancelText="Cancelar"
+          okText="Selecionar"
           placeholder="Selecione o evento"
           labelPlacement="start"
           justify="space-between"
@@ -55,16 +56,26 @@
         @if (previewUrl(); as url) {
           <div class="media-portrait-shell">
             <div class="media-card-filled">
-              <button
-                type="button"
-                class="media-zone media-zone--preview"
-                (click)="abrirFotoPeloCard()"
-                aria-label="Trocar foto. Toque para escolher outra foto do convidado."
-              >
-                <div class="media-preview-frame">
-                  <img [src]="url" alt="Pré-visualização da foto" class="media-preview" />
-                </div>
-              </button>
+              <div class="media-zone media-zone--preview">
+                <button
+                  type="button"
+                  class="media-preview-ver-foto"
+                  (click)="abrirVisualizadorFoto(url, 'Pré-visualização da foto')"
+                  aria-label="Ver foto em ecrã inteiro"
+                >
+                  <div class="media-preview-frame">
+                    <img [src]="url" alt="Pré-visualização da foto" class="media-preview" />
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  class="media-trocar-foto"
+                  (click)="abrirFotoPeloCard()"
+                  aria-label="Trocar foto: câmara ou galeria"
+                >
+                  <ion-icon name="images-outline" />
+                </button>
+              </div>
               <button
                 type="button"
                 class="media-excluir-foto"
@@ -128,6 +139,7 @@
             [nome]="item.nome"
             [fotografo]="item.fotografo"
             [thumbUrl]="item.thumbUrl"
+            (visualizarFoto)="abrirVisualizadorFoto($event.url, $event.alt)"
           />
         }
         @if (historicoFiltrado().length === 0) {
@@ -158,4 +170,11 @@
     </div>
   </div>
   </div>
+
+  <app-visualizador-foto
+    [aberto]="visualizadorFotoAberto()"
+    [src]="visualizadorFotoSrc()"
+    [alt]="visualizadorFotoAlt()"
+    (fechar)="fecharVisualizadorFoto()"
+  />
 </ion-content>

@@ -336,6 +336,24 @@ $vetorizar-acento: #c15261;
   background: #eef1f3;
 }
 
+.vetor-thumb-hit {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: zoom-in;
+  border-radius: inherit;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.vetor-thumb-hit--fill {
+  min-height: 0;
+}
+
 .vetor-pendente-card__thumb {
   display: block;
   width: 100%;
@@ -424,7 +442,69 @@ $vetorizar-acento: #c15261;
   filter: brightness(0.97);
 }
 
-.vetorizar-filtros__panel--em-processo {
+/* Tablet+: ações empilhadas no canto superior direito — Baixar em cima, Iniciar em baixo */
+@media screen and (min-width: 768px) {
+  .vetor-pendente-card {
+    --vetor-pendente-thumb-h: 100px;
+    position: relative;
+    overflow: visible;
+    isolation: isolate;
+    /* Mantém 16px em todos os lados — sem min-height extra que “duplicava” o espaço em baixo */
+    padding: 16px;
+  }
+
+  /* Miniatura maior só no tablet (~pilha Baixar+Iniciar), formato retrato */
+  .vetor-pendente-card__thumb-wrap {
+    width: 92px;
+    height: var(--vetor-pendente-thumb-h);
+    border-radius: 11px;
+  }
+
+  .vetor-pendente-card__row {
+    align-items: stretch;
+    position: relative;
+    z-index: 0;
+    /*
+     * Ações estão em position:absolute — não ocupam fluxo. Com miniatura 100px a linha já é
+     * ≥ pilha Baixar+Iniciar (~98px); margem inferior duplicava espaço branco por baixo dos botões.
+     */
+    margin-bottom: 0;
+  }
+
+  /* Evita que nome/registo fiquem por baixo dos botões; texto alinhado à miniatura */
+  .vetor-pendente-card__body {
+    padding-top: 0;
+    padding-right: calc(10.5rem + 12px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: var(--vetor-pendente-thumb-h);
+  }
+
+  .vetor-pendente-card__acoes {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    left: auto;
+    width: auto;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 10px;
+    margin: 0;
+    z-index: 5;
+  }
+
+  .vetor-pendente-card__btn {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 10rem;
+    padding-inline: 14px;
+  }
+}
+
+.vetorizar-filtros__panel--em-processo,
+.vetorizar-filtros__panel--finalizados {
   background: transparent;
   border: none;
   min-height: 0;
@@ -434,7 +514,8 @@ $vetorizar-acento: #c15261;
 
 /* Estado branco: placeholder dentro do painel ainda com texto legível */
 .vetorizar-filtros__panel--pendentes .vetorizar-filtros__placeholder,
-.vetorizar-filtros__panel--em-processo .vetorizar-filtros__placeholder {
+.vetorizar-filtros__panel--em-processo .vetorizar-filtros__placeholder,
+.vetorizar-filtros__panel--finalizados .vetorizar-filtros__placeholder {
   color: rgba(255, 255, 255, 0.9);
   text-align: center;
   padding: 8px 4px;
@@ -794,22 +875,164 @@ $vetorizar-acento: #c15261;
   min-width: 0;
 }
 
+/* —— Finalizados —— */
 .vetor-fin {
   list-style: none;
   margin: 0;
   padding: 0;
-  color: rgba(255, 255, 255, 0.95);
-  font-family: var(--ion-font-family, "Roboto Serif", Georgia, serif);
-  font-size: clamp(0.86rem, 2.1vw, 0.95rem);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .vetor-fin__item {
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.vetor-fin__item:last-child {
-  border-bottom: none;
+.vetor-fin-card {
+  --vetor-ac: #c15261;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  box-sizing: border-box;
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.1),
+    0 1px 4px rgba(0, 0, 0, 0.06);
+  font-family: var(--ion-font-family, "Roboto Serif", Georgia, serif);
+  width: 100%;
+}
+
+.vetor-fin-card__head {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+  min-width: 0;
+}
+
+.vetor-fin-card__compare {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+}
+
+.vetor-fin-card__pair {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.vetor-fin-card__pair-lbl {
+  font-size: clamp(0.72rem, 2vw, 0.8rem);
+  font-weight: 600;
+  color: #5c6370;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.vetor-fin-card__frame {
+  width: 100%;
+  max-width: 160px;
+  margin-inline: auto;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #eef1f3;
+  border: 1px solid #e4e8ed;
+  box-sizing: border-box;
+}
+
+.vetor-fin-card__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.vetor-fin-card__doc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: #fafbfc;
+}
+
+.vetor-fin-card__doc ion-icon {
+  font-size: 2.25rem;
+  color: #6b7179;
+}
+
+.vetor-fin-card__arrow {
+  flex: 0 0 auto;
+  align-self: center;
+  color: var(--vetor-ac);
+  font-size: 1.35rem;
+  margin-top: 1.25rem;
+}
+
+.vetor-fin-card__mais {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  min-height: 40px;
+  margin: -4px -4px 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #5c6370;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.vetor-fin-card__mais ion-icon {
+  font-size: 1.35rem;
+  pointer-events: none;
+}
+
+.vetor-fin-card__mais:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #2c3138;
+}
+
+.vetor-fin-card__nome {
+  margin: 0 0 8px;
+  font-size: clamp(0.98rem, 2.8vw, 1.08rem);
+  font-weight: 700;
+  line-height: 1.25;
+  color: #2c3138;
+}
+
+.vetor-fin-card__meta {
+  margin: 0 0 4px;
+  font-size: clamp(0.8rem, 2.1vw, 0.9rem);
+  line-height: 1.35;
+  color: #5c6370;
+}
+
+.vetor-fin-card__meta:last-child {
+  margin-bottom: 0;
+}
+
+.vetor-fin-card__meta-k {
+  font-weight: 700;
+  color: #3d4450;
 }
 
 .vetorizar-filtros__placeholder,
